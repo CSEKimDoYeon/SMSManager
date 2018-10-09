@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             string = String.format("msgid:%d, threadid:%d, address:%s, " + "contactid:%d, contackstring:%s, timestamp:%d, body:%s", messageId, threadId, address, contactId,
                     contactId_string, timestamp, body);
 
-            Log.d("heylee", ++count + "st, Message: " + body);
+            Log.d("heylee", ++count + "st, Message: " + string);
         }
         return 0;
     }
