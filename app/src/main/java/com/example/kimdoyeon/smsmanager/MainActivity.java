@@ -2,15 +2,19 @@ package com.example.kimdoyeon.smsmanager;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -20,7 +24,7 @@ import java.util.logging.Logger;
 public class MainActivity extends AppCompatActivity {
 
     static final int SMS_READ_PERMISSON = 1;
-
+    Button Ads_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +54,16 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, SMS_READ_PERMISSON);
             }
         }
+        Ads_btn = (Button)findViewById(R.id.ads_button);
+        Ads_btn.setOnClickListener(new View.OnClickListener(){
 
+            @Override
+            public void onClick(View v) {
+                //getContentResolver().delete(Uri.parse("content://sms/" + 10453), null, null);
+                SMSDelete();
+                Toast.makeText(getApplicationContext(), "DeleteSMS", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -92,22 +105,42 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    public void SMSDelete(View view) {
+    public void SMSDelete() {
         ContentResolver cr = getContentResolver();
         Toast.makeText(getApplicationContext(), "문자 삭제 실행", Toast.LENGTH_SHORT).show();
 
         try {
-            Uri uriSms = Uri.parse("content://sms");
+            Uri uriSms = Uri.parse("content://sms/inbox");
             Cursor c = cr.query(uriSms,
                     new String[]{"_id", "thread_id", "address",
                             "person", "date", "body"}, null, null, null);
 
-            while (c.moveToNext()) {      // Delete SMS
-                long thread_id = c.getLong(1);   // SMS는 thread_id 값을
+            if(c!=null && c.moveToFirst()){
+                do{
+                    long id = c.getLong(0);
+                    long threadId = c.getLong(1);
+                    int count;
+                    String address = c.getString(2);
+                    String body = c.getString(5);
+                    String date = c.getString(4);
 
-                Uri thread = Uri.parse("content://sms/conversations/" + thread_id);
-                getContentResolver().delete(thread, null, null);
+                    Uri deleteUri = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        deleteUri = Uri.withAppendedPath(Uri.parse("content://sms/conversations/"), String.valueOf(id));
 
+                        // mLogger.logInfo("Deleting SMS with id: " + threadId);
+                        if (id == 11038) {
+                            count = MainActivity.this.getContentResolver().delete(
+                                    deleteUri, c.getString(0)+ "= ?", new String[]{"_id"});
+                            Log.e("del", String.valueOf(deleteUri));
+                            Log.e("log>>>", "Delete success.........");
+                            Log.e("boolean>>>", Integer.toString(count));
+
+                        } else {
+                            Log.e("log>>>", Long.toString(id));
+                        }
+                    }
+                } while (c.moveToNext());
             }
 
         } catch (Exception e) {
