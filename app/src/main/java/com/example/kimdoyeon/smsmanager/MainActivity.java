@@ -45,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         if (permissonCheck == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getApplicationContext(), "SMS 수신권한 있음", Toast.LENGTH_SHORT).show();
 
+            mDbOpenHelper = new DbOpenHelper(this);
+            mDbOpenHelper.open();
+            mDbOpenHelper.create();
+
             readSMSMessage();
 
         } else {
@@ -66,9 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         /*--------내부 데이터베이스 OPEN--------*/
-        mDbOpenHelper = new DbOpenHelper(this);
-        mDbOpenHelper.open();
-        mDbOpenHelper.create();
+
 //        showDatabase(sort);
     }
 
@@ -114,9 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
             //mDbOpenHelper.open();
             mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
-            //showDatabase(sort);
-
         }
+        showDatabase(sort);
+
+
         c.close();
         return 0;
     }
