@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
+import android.provider.Telephony.Sms;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +19,20 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
+    private DbOpenHelper mDbOpenHelper;
+
+    public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     static final int SMS_READ_PERMISSON = 1;
+    String sort = "message_id";
+
     Button Ads_btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,16 +62,13 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, SMS_READ_PERMISSON);
             }
         }
-        Ads_btn = (Button)findViewById(R.id.ads_button);
-        Ads_btn.setOnClickListener(new View.OnClickListener(){
+        Ads_btn = (Button) findViewById(R.id.ads_button);
 
-            @Override
-            public void onClick(View v) {
-                //getContentResolver().delete(Uri.parse("content://sms/" + 10453), null, null);
-                SMSDelete();
-                Toast.makeText(getApplicationContext(), "DeleteSMS", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+        /*--------내부 데이터베이스 OPEN--------*/
+        mDbOpenHelper = new DbOpenHelper(this);
+        mDbOpenHelper.open();
+        mDbOpenHelper.create();
     }
 
     @Override
@@ -80,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int readSMSMessage() {
+
         Toast.makeText(getApplicationContext(), "문자 목록을 로그캣에 출력합니다.", Toast.LENGTH_SHORT).show();
 
         Uri allMessage = Uri.parse("content://sms/inbox");
@@ -101,81 +107,50 @@ public class MainActivity extends AppCompatActivity {
                     contactId_string, timestamp, body);
 
             Log.e("heylee", ++count + "st, Message: " + string);
+
+            MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
+            mArray.add(mObj); // ArrayList에 추가.
+
+            //mDbOpenHelper.open();
+            //mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+            //showDatabase(sort);
+
         }
+        c.close();
         return 0;
     }
 
-    public void SMSDelete() {
-        ContentResolver cr = getContentResolver();
-        Toast.makeText(getApplicationContext(), "문자 삭제 실행", Toast.LENGTH_SHORT).show();
+    public void showDatabase(String sort) {
+        Cursor iCursor = mDbOpenHelper.sortColumn(sort);
+        Log.d("showDatabase", "DB Size: " + iCursor.getCount());
+        //arrayData.clear();
+        // arrayIndex.clear();
+        while (iCursor.moveToNext()) {
+            /*
+            String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
+            String tempID = iCursor.getString(iCursor.getColumnIndex("userid"));
+            tempID = setTextLength(tempID,10);
+            String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
+            tempName = setTextLength(tempName,10);
+            String tempAge = iCursor.getString(iCursor.getColumnIndex("age"));
+            tempAge = setTextLength(tempAge,10);
+            String tempGender = iCursor.getString(iCursor.getColumnIndex("gender"));
+            tempGender = setTextLength(tempGender,10);*/
 
-        try {
-            Uri uriSms = Uri.parse("content://sms/inbox");
-            Cursor c = cr.query(uriSms,
-                    new String[]{"_id", "thread_id", "address",
-                            "person", "date", "body"}, null, null, null);
+            long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
+            long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
+            String address = iCursor.getString(iCursor.getColumnIndex("message_address"));
+            long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
+            String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
-            if(c!=null && c.moveToFirst()){
-                do{
-                    long id = c.getLong(0);
-                    long threadId = c.getLong(1);
-                    int count;
-                    String address = c.getString(2);
-                    String body = c.getString(5);
-                    String date = c.getString(4);
-
-                    Uri deleteUri = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        deleteUri = Uri.withAppendedPath(Uri.parse("content://sms/conversations/"), String.valueOf(id));
-
-                        // mLogger.logInfo("Deleting SMS with id: " + threadId);
-                        if (id == 11038) {
-                            count = MainActivity.this.getContentResolver().delete(
-                                    deleteUri, c.getString(0)+ "= ?", new String[]{"_id"});
-                            Log.e("del", String.valueOf(deleteUri));
-                            Log.e("log>>>", "Delete success.........");
-                            Log.e("boolean>>>", Integer.toString(count));
-
-                        } else {
-                            Log.e("log>>>", Long.toString(id));
-                        }
-                    }
-                } while (c.moveToNext());
-            }
-
-        } catch (Exception e) {
-            //mLogger.logError("Could not delete SMS from inbox: " + e.getMessage());
+            Log.e("column","message_id : "+message_id+" / thread_id : "+thread_id+ " / address : "+address+
+            " / message_time : "+message_time+ " / body : " + body);
+            //String Result = tempID + tempName + tempAge + tempGender;
+            //arrayData.add(Result);
+            //arrayIndex.add(tempIndex);
         }
-    }
-
-    public int deleteSpecifiedSMSHistory(View view){
-
-        Toast.makeText(getApplicationContext(), "문자 삭제합니다.", Toast.LENGTH_SHORT).show();
-
-        Uri allMessage = Uri.parse("content://sms/inbox");
-        ContentResolver cr = getContentResolver();
-        //Cursor c = cr.query(allMessage, new String[]{"_id", "thread_id", "address", "person", "date", "body"}, null, null, "date DESC");
-        Cursor c = cr.query(allMessage, new String[]{"_id", "thread_id", "address", "person", "date", "body"}, null, null, null);
-        String string = "";
-        int count = 0;
-        while (c.moveToNext()) {
-            long messageId = c.getLong(0);
-            long threadId = c.getLong(1);
-            String address = c.getString(2);
-            long contactId = c.getLong(3);
-            String contactId_string = String.valueOf(contactId);
-            long timestamp = c.getLong(4);
-            String body = c.getString(5);
-
-            Log.e("삭제한 문자의 threadId", "Thread ID : " + threadId);
-
-            /*string = String.format("msgid:%d, threadid:%d, address:%s, " + "contactid:%d, contackstring:%s, timestamp:%d, body:%s", messageId, threadId, address, contactId,
-                    contactId_string, timestamp, body);
-
-            Log.e("heylee", ++count + "st, Message: " + string);*/
-            Uri thread = Uri.parse("content://sms/conversations/" + threadId);
-            cr.delete(thread,null,null);
-        }
-        return 0;
+        //arrayAdapter.clear();
+        //arrayAdapter.addAll(arrayData);
+        //arrayAdapter.notifyDataSetChanged();
     }
 }
