@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
             //mDbOpenHelper.open();
             mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+
         }
         showDatabase(sort);
 
