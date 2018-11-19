@@ -21,12 +21,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="2">
 
         <Switch
             android:id="@+id/switch_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:thumb="@drawable/switch_thumb"
             android:track="@drawable/switch_track_selector" />
@@ -49,8 +49,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:onClick="deleteSpecifiedSMSHistory"
-                android:text="광고" />
+                android:text="광고"
+                android:onClick="deleteSpecifiedSMSHistory"/>
         </LinearLayout>
 
         <LinearLayout
@@ -84,7 +84,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:onClick="deleteSpecifiedSMSHistory"
                 android:text="스팸" />
         </LinearLayout>
 
@@ -112,12 +111,5 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="저장"/>
-
-        <Button
-            android:layout_gravity="center"
-            android:id="@+id/button_showDB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="데이터베이스 로그에 출력하기." />
     </LinearLayout>
 </LinearLayout>

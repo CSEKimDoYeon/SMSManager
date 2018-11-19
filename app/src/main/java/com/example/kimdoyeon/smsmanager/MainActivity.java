@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         mDbOpenHelper = new DbOpenHelper(this);
         mDbOpenHelper.open();
         mDbOpenHelper.create();
+//        showDatabase(sort);
     }
 
     @Override
@@ -111,9 +112,8 @@ public class MainActivity extends AppCompatActivity {
             MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
             mArray.add(mObj); // ArrayList에 추가.
 
-            //여기가 안댐..
             //mDbOpenHelper.open();
-            //mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+            mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
             //showDatabase(sort);
 
         }

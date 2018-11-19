@@ -14,10 +14,10 @@ public final class DataBases {
         public static final String _TABLE = "Messages";
 
         public static final String _CREATE0 = "create table if not exists "+ _TABLE +"("
-                + MESSAGE_ID+" integer primary key , "
-                + THREAD_ID +" integer not null , "
-                + MESSAGE_ADDRESS +" text not null , "
-                + MESSAGE_TIME +" integer not null , "
-                + MESSAGE_BODY +" text not null );";
+                + MESSAGE_ID+" integer primary key, "
+                + THREAD_ID +" integer not null, "
+                + MESSAGE_ADDRESS +" text not null, "
+                + MESSAGE_TIME +" integer not null, "
+                + MESSAGE_BODY +" text not null);";
     }
 }
