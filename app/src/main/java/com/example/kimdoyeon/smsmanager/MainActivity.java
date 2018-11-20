@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -26,6 +27,9 @@ import java.util.logging.Logger;
 public class MainActivity extends AppCompatActivity {
 
     private DbOpenHelper mDbOpenHelper;
+
+    ListView listView;
+    ListViewAdapter adapter;
 
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     static final int SMS_READ_PERMISSON = 1;
@@ -38,7 +42,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //readSMSMessage();
+        /*------------ListView 정의-----------*/
+        adapter = new ListViewAdapter();
+        listView = (ListView) findViewById(R.id.listview1);
+        listView.setAdapter(adapter);
+        /*------------------------------------*/
+
+
         //권한이 부여되어 있는지 확인
         int permissonCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
 
@@ -69,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
         Ads_btn = (Button) findViewById(R.id.ads_button);
 
 
-        /*--------내부 데이터베이스 OPEN--------*/
 
-//        showDatabase(sort);
     }
 
     @Override
@@ -116,10 +124,9 @@ public class MainActivity extends AppCompatActivity {
 
             //mDbOpenHelper.open();
             mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
-
         }
         showDatabase(sort);
-
+        addAllOfData_To_ListView(mArray);
 
         c.close();
         return 0;
@@ -149,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
             Log.e("column","message_id : "+message_id+" / thread_id : "+thread_id+ " / address : "+address+
-            " / message_time : "+message_time+ " / body : " + body);
+                    " / message_time : "+message_time+ " / body : " + body);
             //String Result = tempID + tempName + tempAge + tempGender;
             //arrayData.add(Result);
             //arrayIndex.add(tempIndex);
@@ -157,5 +164,11 @@ public class MainActivity extends AppCompatActivity {
         //arrayAdapter.clear();
         //arrayAdapter.addAll(arrayData);
         //arrayAdapter.notifyDataSetChanged();
+    }
+
+    public void addAllOfData_To_ListView(ArrayList<MessageObj> mArray) {
+        for(int i=0; i<mArray.size();i++){
+            adapter.addItem(mArray.get(i).getMessage_Address(),mArray.get(i).getMessage_Body());
+        }
     }
 }

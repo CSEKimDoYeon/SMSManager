@@ -71,7 +71,7 @@ public class DbOpenHelper {
         values.put(DataBases.CreateDB.MESSAGE_ADDRESS, address);
         values.put(DataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(DataBases.CreateDB.MESSAGE_BODY, body);
-       // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;
+        // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;
         return mDB.update(DataBases.CreateDB._TABLE, values, null, null) > 0;
     }
 
