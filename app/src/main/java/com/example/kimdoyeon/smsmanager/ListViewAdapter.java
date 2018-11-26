@@ -2,21 +2,25 @@ package com.example.kimdoyeon.smsmanager;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListViewAdapter extends BaseAdapter {
+public class ListViewAdapter extends ArrayAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<MessageObj> listViewItemList = new ArrayList<MessageObj>() ;
 
     // ListViewAdapter의 생성자
-    public ListViewAdapter() {
 
+
+    public ListViewAdapter(@NonNull Context context, int resource, ArrayList<MessageObj> arr)  {
+        super(context, resource);
     }
 
     // Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현

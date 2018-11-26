@@ -42,6 +42,7 @@ public class MessageActivity extends Activity {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage(send_Address, null, message_contents, null, null);
                     Toast.makeText(getApplicationContext(), "전송이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                    finish();
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "전송을 실패하였습니다.", Toast.LENGTH_LONG).show();
                     e.printStackTrace();

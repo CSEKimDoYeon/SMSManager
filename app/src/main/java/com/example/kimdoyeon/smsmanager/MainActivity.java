@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -46,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShowNavigationDrawer;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-
     private DbOpenHelper mDbOpenHelper;
+
     ListView listView;
     ListViewAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     static final int SMS_READ_PERMISSON = 1;
@@ -78,26 +81,37 @@ public class MainActivity extends AppCompatActivity {
         /*-------------Navigation Drawer------------*/
 
 
-        /*------------ListView 정의-----------*/
-        adapter = new ListViewAdapter();
+        /*--------------------------------ListView 정의------------------------------------------*/
+        adapter = new ListViewAdapter(this, R.layout.listview_item, mArray);
         listView = (ListView) findViewById(R.id.listview1);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
-                MessageObj mObj = (MessageObj) parent.getItemAtPosition(position) ;
+                MessageObj mObj = (MessageObj) parent.getItemAtPosition(position);
 
-                String Address = mObj.getMessage_Address() ;
-                String Body = mObj.getMessage_Body() ;
+                String Address = mObj.getMessage_Address();
+                String Body = mObj.getMessage_Body();
 
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-                intent.putExtra("key_Address",Address);
-                intent.putExtra("key_Body",Body);
+                intent.putExtra("key_Address", Address);
+                intent.putExtra("key_Body", Body);
                 startActivity(intent);
             }
-        }) ;
+        });
 
-        /*------------------------------------*/
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.sr_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                // 새로고침 할 작업
+
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        /*----------------------------------------------------------------------------------------*/
 
 
         //문자 읽기 권한이 부여되어 있는지 확인
@@ -168,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.btnShowNavigationDrawer:
                     drawerLayout.openDrawer(GravityCompat.START);
                     break;
@@ -176,19 +190,19 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void setUpDrawerContent(NavigationView navigationView){
+    private void setUpDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.first_navigation_item:
-                        Toast.makeText(MainActivity.this,"첫번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "첫번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.second_navigation_item:
-                        Toast.makeText(MainActivity.this,"두번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "두번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.third_navigation_item:
-                        Toast.makeText(MainActivity.this,"세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return false;
@@ -199,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
     /*private ActionBarDrawerToggle setUpActionBarToggle(){
         return new ActionBarDrawerToggle(this, drawerLayout,toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     }*/
-
 
 
     @Override
@@ -216,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int readSMSMessage() {
-
+        mArray.clear();
         Toast.makeText(getApplicationContext(), "문자 목록을 로그캣에 출력합니다.", Toast.LENGTH_SHORT).show();
 
         Uri allMessage = Uri.parse("content://sms/inbox");
@@ -265,15 +278,15 @@ public class MainActivity extends AppCompatActivity {
             long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
-            Log.e("column","message_id : "+message_id+" / thread_id : "+thread_id+ " / address : "+address+
-                    " / message_time : "+message_time+ " / body : " + body + "\n");
+            Log.e("column", "message_id : " + message_id + " / thread_id : " + thread_id + " / address : " + address +
+                    " / message_time : " + message_time + " / body : " + body + "\n");
 
         }
     }
 
     public void addAllOfData_To_ListView(ArrayList<MessageObj> mArray) {
-        for(int i=0; i<mArray.size();i++){
-            adapter.addItem(mArray.get(i).getMessage_Address(),mArray.get(i).getMessage_Body());
+        for (int i = 0; i < mArray.size(); i++) {
+            adapter.addItem(mArray.get(i).getMessage_Address(), mArray.get(i).getMessage_Body());
         }
     }
 }
