@@ -1,15 +1,18 @@
 package com.example.kimdoyeon.smsmanager;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends Activity {
     TextView tv_Address;
     TextView tv_Body;
     EditText et_sendMessage;
@@ -21,6 +24,9 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        //requestWindowFeature(Window.FEATURE_NO_TITLE); // 타이틀바 삭제
+
 
         tv_Address = (TextView) findViewById(R.id.tv_message_address);
         tv_Body = (TextView) findViewById(R.id.tv_message_body);
