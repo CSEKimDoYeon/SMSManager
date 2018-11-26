@@ -6,15 +6,26 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.provider.Telephony;
 import android.provider.Telephony.Sms;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,8 +39,15 @@ import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DbOpenHelper mDbOpenHelper;
+    private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private NavigationView navigationView;
 
+    private Button btnShowNavigationDrawer;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+
+    private DbOpenHelper mDbOpenHelper;
     ListView listView;
     ListViewAdapter adapter;
 
@@ -43,6 +61,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*-------------Navigation Drawer------------*/
+        toolbar = (Toolbar) findViewById(R.id.toolbarInclude);
+        setSupportActionBar(toolbar);
+
+        btnShowNavigationDrawer = (Button) toolbar.findViewById(R.id.btnShowNavigationDrawer);
+        btnShowNavigationDrawer.setOnClickListener(onClickListener);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        //actionBarDrawerToggle = setUpActionBarToggle();
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
+        navigationView = (NavigationView) findViewById(R.id.navigationView);
+        setUpDrawerContent(navigationView);
+        /*-------------Navigation Drawer------------*/
+
 
         /*------------ListView 정의-----------*/
         adapter = new ListViewAdapter();
@@ -117,9 +151,56 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-        Ads_btn = (Button) findViewById(R.id.ads_button);
     }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.btnShowNavigationDrawer:
+                    drawerLayout.openDrawer(GravityCompat.START);
+                    break;
+            }
+        }
+    };
+
+    private void setUpDrawerContent(NavigationView navigationView){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.first_navigation_item:
+                        Toast.makeText(MainActivity.this,"첫번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.second_navigation_item:
+                        Toast.makeText(MainActivity.this,"두번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.third_navigation_item:
+                        Toast.makeText(MainActivity.this,"세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    /*private ActionBarDrawerToggle setUpActionBarToggle(){
+        return new ActionBarDrawerToggle(this, drawerLayout,toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    }*/
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int grantResults[]) {
@@ -177,16 +258,6 @@ public class MainActivity extends AppCompatActivity {
         //arrayData.clear();
         // arrayIndex.clear();
         while (iCursor.moveToNext()) {
-            /*
-            String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
-            String tempID = iCursor.getString(iCursor.getColumnIndex("userid"));
-            tempID = setTextLength(tempID,10);
-            String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
-            tempName = setTextLength(tempName,10);
-            String tempAge = iCursor.getString(iCursor.getColumnIndex("age"));
-            tempAge = setTextLength(tempAge,10);
-            String tempGender = iCursor.getString(iCursor.getColumnIndex("gender"));
-            tempGender = setTextLength(tempGender,10);*/
 
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
@@ -195,14 +266,9 @@ public class MainActivity extends AppCompatActivity {
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
             Log.e("column","message_id : "+message_id+" / thread_id : "+thread_id+ " / address : "+address+
-                    " / message_time : "+message_time+ " / body : " + body);
-            //String Result = tempID + tempName + tempAge + tempGender;
-            //arrayData.add(Result);
-            //arrayIndex.add(tempIndex);
+                    " / message_time : "+message_time+ " / body : " + body + "\n");
+
         }
-        //arrayAdapter.clear();
-        //arrayAdapter.addAll(arrayData);
-        //arrayAdapter.notifyDataSetChanged();
     }
 
     public void addAllOfData_To_ListView(ArrayList<MessageObj> mArray) {

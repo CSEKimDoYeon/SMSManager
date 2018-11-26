@@ -15,10 +15,12 @@
 
         <TextView
             android:id="@+id/textView3"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="발신자 : "
+            android:text="From ) "
+            android:fontFamily="@font/font_godo"
             android:textStyle="bold"
             android:textSize="22sp" />
 
@@ -29,6 +31,7 @@
             android:layout_weight="1"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:fontFamily="@font/font_godo"
             android:text="TextView" />
     </LinearLayout>
 
@@ -46,16 +49,20 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="내용:" />
+            android:fontFamily="@font/font_godo"
+            android:text="Contents )" />
         <TextView
             android:id="@+id/tv_message_body"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="290dp"
             android:textSize="20sp"
+            android:fontFamily="@font/font_godo"
             android:text="TextView" />
 
         <LinearLayout
@@ -68,12 +75,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/font_godo"
                 android:hint="내용을 입력하세요." />
 
             <Button
                 android:id="@+id/btn_sendMessage"
                 android:layout_width="65dp"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
+                android:fontFamily="@font/font_godo"
                 android:text="전송" />
         </LinearLayout>
 
