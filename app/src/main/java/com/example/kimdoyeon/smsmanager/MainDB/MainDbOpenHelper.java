@@ -1,4 +1,4 @@
-package com.example.kimdoyeon.smsmanager;
+package com.example.kimdoyeon.smsmanager.MainDB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DbOpenHelper {
+public class MainDbOpenHelper {
 
     private static final String DATABASE_NAME = "InnerDatabase(SQLite).db";
     private static final int DATABASE_VERSION = 1;
@@ -24,21 +24,22 @@ public class DbOpenHelper {
 
         @Override
         public void onCreate(SQLiteDatabase db){
-            db.execSQL(DataBases.CreateDB._CREATE0);
+
+            db.execSQL(MainDataBases.CreateDB._CREATE0);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS "+DataBases.CreateDB._TABLE);
+            db.execSQL("DROP TABLE IF EXISTS "+MainDataBases.CreateDB._TABLE);
             onCreate(db);
         }
     }
 
-    public DbOpenHelper(Context context){
+    public MainDbOpenHelper(Context context){
         this.mCtx = context;
     }
 
-    public DbOpenHelper open() throws SQLException {
+    public MainDbOpenHelper open() throws SQLException {
         mDBHelper = new DatabaseHelper(mCtx, DATABASE_NAME, null, DATABASE_VERSION);
         mDB = mDBHelper.getWritableDatabase();
         return this;
@@ -55,38 +56,39 @@ public class DbOpenHelper {
     // Insert DB
     public long insertColumn(long messageId, long threadId, String address , long timestamp, String body){
         ContentValues values = new ContentValues();
-        values.put(DataBases.CreateDB.MESSAGE_ID, messageId);
-        values.put(DataBases.CreateDB.THREAD_ID, threadId);
-        values.put(DataBases.CreateDB.MESSAGE_ADDRESS, address);
-        values.put(DataBases.CreateDB.MESSAGE_TIME, timestamp);
-        values.put(DataBases.CreateDB.MESSAGE_BODY, body);
-        return mDB.insert(DataBases.CreateDB._TABLE, null, values);
+        values.put(MainDataBases.CreateDB.MESSAGE_ID, messageId);
+        values.put(MainDataBases.CreateDB.THREAD_ID, threadId);
+        values.put(MainDataBases.CreateDB.MESSAGE_ADDRESS, address);
+        values.put(MainDataBases.CreateDB.MESSAGE_TIME, timestamp);
+        values.put(MainDataBases.CreateDB.MESSAGE_BODY, body);
+        return mDB.insert(MainDataBases.CreateDB._TABLE, null, values);
     }
 
     // Update DB
     public boolean updateColumn(long messageId, long threadId, String address , long timestamp, String body){
         ContentValues values = new ContentValues();
-        values.put(DataBases.CreateDB.MESSAGE_ID, messageId);
-        values.put(DataBases.CreateDB.THREAD_ID, threadId);
-        values.put(DataBases.CreateDB.MESSAGE_ADDRESS, address);
-        values.put(DataBases.CreateDB.MESSAGE_TIME, timestamp);
-        values.put(DataBases.CreateDB.MESSAGE_BODY, body);
+        values.put(MainDataBases.CreateDB.MESSAGE_ID, messageId);
+        values.put(MainDataBases.CreateDB.THREAD_ID, threadId);
+        values.put(MainDataBases.CreateDB.MESSAGE_ADDRESS, address);
+        values.put(MainDataBases.CreateDB.MESSAGE_TIME, timestamp);
+        values.put(MainDataBases.CreateDB.MESSAGE_BODY, body);
         // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;
-        return mDB.update(DataBases.CreateDB._TABLE, values, null, null) > 0;
+        return mDB.update(MainDataBases.CreateDB._TABLE, values, null, null) > 0;
     }
 
     // Delete All
     public void deleteAllColumns() {
-        mDB.delete(DataBases.CreateDB._TABLE, null, null);
+
+        mDB.delete(MainDataBases.CreateDB._TABLE, null, null);
     }
 
     // Delete DB
     public boolean deleteColumn(long id){
-        return mDB.delete(DataBases.CreateDB._TABLE, "_id="+id, null) > 0;
+        return mDB.delete(MainDataBases.CreateDB._TABLE, "_id="+id, null) > 0;
     }
     // Select DB
     public Cursor selectColumns(){
-        return mDB.query(DataBases.CreateDB._TABLE, null, null, null, null, null, null);
+        return mDB.query(MainDataBases.CreateDB._TABLE, null, null, null, null, null, null);
     }
 
     // sort by column

@@ -6,19 +6,25 @@
 
         <item
             android:id="@+id/first_navigation_item"
-            android:title="중요 SMS"/>
+            android:icon="@drawable/ic_recyclebin"
+            android:title="중요 SMS"
+            />
+
 
         <item
             android:id="@+id/second_navigation_item"
-            android:title="삭제 Keyword 관리"/>
+            android:icon="@drawable/ic_recyclebin"
+            android:title="삭제 Keyword 관리" />
 
         <item
             android:id="@+id/third_navigation_item"
-            android:title="스팸번호 관리"/>
+            android:icon="@drawable/ic_recyclebin"
+            android:title="스팸번호 관리" />
 
         <item
             android:id="@+id/fourth_navigation_item"
-            android:title="휴지통 관리"/>
+            android:icon="@drawable/ic_recyclebin"
+            android:title="휴지통 관리" />
 
     </group>
 

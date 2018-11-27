@@ -1,4 +1,4 @@
-package com.example.kimdoyeon.smsmanager;
+package com.example.kimdoyeon.smsmanager.Objects;
 
 public class MessageObj {
     public long message_Id;

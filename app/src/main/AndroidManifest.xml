@@ -25,7 +25,12 @@
             android:name=".MessageActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" />
 
-        <receiver android:name=".NewAppWidget">
+        <activity android:name=".AddDeleteKeywordActivity" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar"/>
+
+
+        <activity android:name=".DeleteKeywordActivity"></activity>
+
+        <receiver android:name=".AppWidget.NewAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

@@ -2,16 +2,12 @@ package com.example.kimdoyeon.smsmanager;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.PersistableBundle;
-import android.provider.Telephony;
-import android.provider.Telephony.Sms;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -20,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,15 +24,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import com.example.kimdoyeon.smsmanager.ListViewAdapter.ListViewAdapter;
+import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
+import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
+
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShowNavigationDrawer;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private DbOpenHelper mDbOpenHelper;
+    private MainDbOpenHelper mDbOpenHelper;
 
     ListView listView;
     ListViewAdapter adapter;
@@ -56,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     static final int SMS_READ_PERMISSON = 1;
+    static final int SMS_SEND_PERMISSON = 1;
     String sort = "message_id";
 
     Button Ads_btn;
@@ -82,23 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         /*--------------------------------ListView 정의------------------------------------------*/
-        adapter = new ListViewAdapter(this, R.layout.listview_item, mArray);
+
         listView = (ListView) findViewById(R.id.listview1);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-                MessageObj mObj = (MessageObj) parent.getItemAtPosition(position);
 
-                String Address = mObj.getMessage_Address();
-                String Body = mObj.getMessage_Body();
-
-                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-                intent.putExtra("key_Address", Address);
-                intent.putExtra("key_Body", Body);
-                startActivity(intent);
-            }
-        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.sr_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -106,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // 새로고침 할 작업
-
-
+                readSMSMessage();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -118,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
         int permissonCheck_Read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
 
         if (permissonCheck_Read == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getApplicationContext(), "SMS 수신권한 있음", Toast.LENGTH_SHORT).show();
 
-            mDbOpenHelper = new DbOpenHelper(this);
+            Toast.makeText(getApplicationContext(), "SMS 수신권한 있음", Toast.LENGTH_SHORT).show();
+            mDbOpenHelper = new MainDbOpenHelper(this);
             mDbOpenHelper.open();
             mDbOpenHelper.create();
 
@@ -142,15 +123,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         int permissonCheck_Send = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
-
         if (permissonCheck_Send == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getApplicationContext(), "SMS 송신권한 있음", Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(getApplicationContext(), "SMS 송신권한 없음", Toast.LENGTH_SHORT).show();
-
             //권한설정 dialog에서 거부를 누르면
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
             //단, 사용자가 "Don't ask again"을 체크한 경우
@@ -158,12 +136,11 @@ public class MainActivity extends AppCompatActivity {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
                 Toast.makeText(getApplicationContext(), "SMS권한이 필요합니다", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_READ_PERMISSON);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_SEND_PERMISSON);
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_READ_PERMISSON);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_SEND_PERMISSON);
             }
         }
-
 
     }
 
@@ -200,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.second_navigation_item:
                         Toast.makeText(MainActivity.this, "두번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, DeleteKeywordActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.third_navigation_item:
                         Toast.makeText(MainActivity.this, "세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
@@ -220,16 +199,32 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case SMS_READ_PERMISSON:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "SMS권한 승인함", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "SMS읽기 승인함", Toast.LENGTH_SHORT).show();
+
+                    mDbOpenHelper = new MainDbOpenHelper(this);
+                    mDbOpenHelper.open();
+                    mDbOpenHelper.create();
+
+                    readSMSMessage();
                 } else {
-                    Toast.makeText(getApplicationContext(), "SMS권한 거부함", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "SMS읽기 거부함", Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+           /* case SMS_SEND_PERMISSON:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "SMS쓰기 승인함", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "SMS쓰기 거부함", Toast.LENGTH_SHORT).show();
+                }
+                break;*/
         }
     }
 
     public int readSMSMessage() {
         mArray.clear();
+        adapter = new ListViewAdapter(this, R.layout.listview_item, mArray);
+
         Toast.makeText(getApplicationContext(), "문자 목록을 로그캣에 출력합니다.", Toast.LENGTH_SHORT).show();
 
         Uri allMessage = Uri.parse("content://sms/inbox");
@@ -254,12 +249,27 @@ public class MainActivity extends AppCompatActivity {
 
             MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
             mArray.add(mObj); // ArrayList에 추가.
-
-            //mDbOpenHelper.open();
+            adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
             mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
         }
         showDatabase(sort);
-        addAllOfData_To_ListView(mArray);
+        //addAllOfData_To_ListView(mArray);
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                MessageObj mObj = (MessageObj) parent.getItemAtPosition(position);
+
+                String Address = mObj.getMessage_Address();
+                String Body = mObj.getMessage_Body();
+
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtra("key_Address", Address);
+                intent.putExtra("key_Body", Body);
+                startActivity(intent);
+            }
+        });
 
         c.close();
         return 0;
@@ -267,11 +277,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void showDatabase(String sort) {
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
-        Log.d("showDatabase", "DB Size: " + iCursor.getCount());
+        Log.e("showDatabase", "DB Size: " + iCursor.getCount());
         //arrayData.clear();
         // arrayIndex.clear();
         while (iCursor.moveToNext()) {
 
+            //long _id = iCursor.getLong(iCursor.getColumnIndex("_id"));
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
             String address = iCursor.getString(iCursor.getColumnIndex("message_address"));

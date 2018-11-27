@@ -1,8 +1,8 @@
-package com.example.kimdoyeon.smsmanager;
+package com.example.kimdoyeon.smsmanager.MainDB;
 
 import android.provider.BaseColumns;
 
-public final class DataBases {
+public final class MainDataBases {
 
     public static final class CreateDB implements BaseColumns{
         public static final String MESSAGE_ID = "message_id";
@@ -14,7 +14,8 @@ public final class DataBases {
         public static final String _TABLE = "Messages";
 
         public static final String _CREATE0 = "create table if not exists "+ _TABLE +"("
-                + MESSAGE_ID+" integer primary key , "
+                + _ID+" integer primary key autoincrement, "
+                + MESSAGE_ID+" integer not null , "
                 + THREAD_ID +" integer not null , "
                 + MESSAGE_ADDRESS +" text not null , "
                 + MESSAGE_TIME +" integer not null , "

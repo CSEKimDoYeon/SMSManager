@@ -1,25 +1,24 @@
-package com.example.kimdoyeon.smsmanager;
+package com.example.kimdoyeon.smsmanager.ListViewAdapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.example.kimdoyeon.smsmanager.R;
 
 import java.util.ArrayList;
 
-public class ListViewAdapter extends ArrayAdapter {
+public class DeleteKeywordListViewAdapter extends ArrayAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
-    private ArrayList<MessageObj> listViewItemList = new ArrayList<MessageObj>() ;
+    private ArrayList<String> listViewItemList = new ArrayList<String>() ;
 
     // ListViewAdapter의 생성자
 
-
-    public ListViewAdapter(@NonNull Context context, int resource, ArrayList<MessageObj> arr)  {
+    public DeleteKeywordListViewAdapter(@NonNull Context context, int resource, ArrayList<String> arr)  {
         super(context, resource);
     }
 
@@ -43,17 +42,17 @@ public class ListViewAdapter extends ArrayAdapter {
 
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
 
-       // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
+        // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
         TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        MessageObj listViewItem = listViewItemList.get(position);
+        String Item = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
         //iconImageView.setImageDrawable(listViewItem.getIcon());
-        titleTextView.setText(listViewItem.getMessage_Address());
-        descTextView.setText(listViewItem.getMessage_Body());
+        titleTextView.setText(Item);
+        descTextView.setText(Item);
 
         return convertView;
     }
@@ -71,13 +70,7 @@ public class ListViewAdapter extends ArrayAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String address, String body) {
-        MessageObj item = new MessageObj();
-
-        //item.setIcon(icon);
-        item.setMessage_Address(address);
-        item.setMessage_Body(body);
-
+    public void addItem(String item) {
         listViewItemList.add(item);
     }
 }
