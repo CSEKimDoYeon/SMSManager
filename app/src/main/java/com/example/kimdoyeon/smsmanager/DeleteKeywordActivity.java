@@ -82,7 +82,7 @@ public class DeleteKeywordActivity extends Activity {
 
     public void showDatabase(String sort) {
         Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
-        adapter = new DeleteKeywordListViewAdapter(this, R.layout.listview_item, mArray);
+        adapter = new DeleteKeywordListViewAdapter(this, R.layout.listview_item_delete_keyword, mArray);
 
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         Log.e("showDatabase", "DB Size: " + iCursor.getCount());
