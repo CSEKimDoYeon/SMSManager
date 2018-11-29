@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.ListViewAdapter;
 import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
@@ -43,16 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShowNavigationDrawer;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private MainDbOpenHelper mDbOpenHelper;
+    private MainDbOpenHelper mDbOpenHelper; // 메인 DB를 오픈 할 Helper.
+    private DeleteKeywordDbOpenHelper deleteDbOpenHelper; // DeleteKeywordDb를 오픈할 Helper.
 
     ListView listView;
     ListViewAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
+    public ArrayList<String> delete_Keyword_Array = new ArrayList<String>();
     static final int SMS_READ_PERMISSON = 1;
     static final int SMS_SEND_PERMISSON = 1;
     String sort = "message_id";
+    String sort_Delete_Keyword = "_id";
 
     Button Ads_btn;
 
@@ -224,6 +228,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int readSMSMessage() {
+        mDbOpenHelper.deleteAllColumns(); // 메인 디비를 전부 지운다.
+        /*DeleteKeyword 디비에서 데이터 가져온다*/
+        setDelete_Keyword_Array();
+        /*--------------------------------------*/
+
         mArray.clear();
         adapter = new ListViewAdapter(this, R.layout.listview_item, mArray);
 
@@ -249,10 +258,14 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("heylee", ++count + "st, Message: " + string);
 
-            MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
-            mArray.add(mObj); // ArrayList에 추가.
-            adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
-            mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+            // << 이부분에 검사해서 삭제키워드가 포함 안되었을 경우에만 아래 기능을 수행한다.
+            if(deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false) {
+                MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
+                mArray.add(mObj); // ArrayList에 추가.
+                adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
+                mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+            }
+            // ------------------------------------------------------------------------------
         }
         showDatabase(sort);
         //addAllOfData_To_ListView(mArray);
@@ -303,9 +316,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public boolean deleteSMSIncludeDeleteKeyword(String body){
-        // 삭제 키워드 디비를 열어서 모든 keyword를 ArrayList에 넣고, body에 포함되어있는지 확인한다.
+    public void setDelete_Keyword_Array(){
+        delete_Keyword_Array.clear();
+        deleteDbOpenHelper = new DeleteKeywordDbOpenHelper(this);
+        deleteDbOpenHelper.open();
+        deleteDbOpenHelper.create();
 
-        return true;
+        Cursor iCursor = deleteDbOpenHelper.sortColumn(sort_Delete_Keyword);
+        Log.e("showDatabase", "DB Size: " + iCursor.getCount());
+
+        while (iCursor.moveToNext()) {
+            //String delete_keyword = iCursor.getString(iCursor.getColumnIndex("DELETE_KEYWORD"));
+            String delete_keyword = iCursor.getString(1);
+            Log.e("column", "\nDELETE_KEYWORD : " + delete_keyword );
+
+            delete_Keyword_Array.add(delete_keyword);
+        }
+    }
+
+    public boolean deleteSMSIncludeDeleteKeyword(ArrayList<String> keywords, String body){
+        // 삭제 키워드 디비를 열어서 모든 keyword를 ArrayList에 넣고, body에 포함되어있는지 확인한다.
+        for(int i = 0; i<keywords.size() ; i++){
+            if(body.contains(keywords.get(i))){
+                return true;
+            }
+        }
+        return false;
     }
 }
