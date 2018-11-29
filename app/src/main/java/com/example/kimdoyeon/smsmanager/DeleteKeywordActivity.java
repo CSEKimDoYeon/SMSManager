@@ -53,8 +53,8 @@ public class DeleteKeywordActivity extends Activity {
         mDbOpenHelper.open();
         mDbOpenHelper.create();
 
-        mDbOpenHelper.insertColumn("광고");
-        mDbOpenHelper.insertColumn("스팸");
+        /*mDbOpenHelper.insertColumn("광고");
+        mDbOpenHelper.insertColumn("스팸");*/
 
         showDatabase(sort);
     }

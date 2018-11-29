@@ -1,7 +1,6 @@
 package com.example.kimdoyeon.smsmanager.ListViewAdapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +10,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.kimdoyeon.smsmanager.DeleteKeywordActivity;
+import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.R;
 
 import java.util.ArrayList;
 
 import at.markushi.ui.CircleButton;
 
+
+
 public class DeleteKeywordListViewAdapter extends ArrayAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
+    private DeleteKeywordDbOpenHelper mDbOpenHelper;
     Context context;
 
     private ArrayList<String> listViewItemList = new ArrayList<String>() ;
@@ -49,11 +51,8 @@ public class DeleteKeywordListViewAdapter extends ArrayAdapter {
             convertView = inflater.inflate(R.layout.listview_item_delete_keyword, parent, false);
         }
 
-        // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-
-        // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
+        /*------------------------UI선언 및 기능 정의----------------------------*/
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
-
 
         CircleButton btn_delete = (CircleButton) convertView.findViewById(R.id.btn_delete_keyword_delete);
         btn_delete.setOnClickListener(new Button.OnClickListener() {
@@ -61,15 +60,23 @@ public class DeleteKeywordListViewAdapter extends ArrayAdapter {
             public void onClick(View view) {
                 // TODO : click event
                 Toast.makeText(context, "버튼 눌려진 포지션 : " + pos , Toast.LENGTH_SHORT).show();
+
+                mDbOpenHelper = new DeleteKeywordDbOpenHelper(context);
+                mDbOpenHelper.open();
+                mDbOpenHelper.create();
+                //mDbOpenHelper.deleteAllColumns();
+                mDbOpenHelper.deleteColumnForKeyword(listViewItemList.get(position));
+                listViewItemList.remove(listViewItemList.get(position));
+                notifyDataSetChanged();
             }
         });
-
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         String Item = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
-        //iconImageView.setImageDrawable(listViewItem.getIcon());
         titleTextView.setText(Item);
+
+        /*---------------------------------------------------------------------*/
 
         return convertView;
     }

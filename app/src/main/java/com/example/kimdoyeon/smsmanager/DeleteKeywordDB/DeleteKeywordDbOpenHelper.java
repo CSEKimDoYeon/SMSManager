@@ -75,6 +75,12 @@ public class DeleteKeywordDbOpenHelper {
     public boolean deleteColumn(long id){
         return mDB.delete(DeleteKeywordDataBases.CreateDB._TABLE, "_id="+id, null) > 0;
     }
+
+    public boolean deleteColumnForKeyword(String keyword){
+        mDB.execSQL("DELETE FROM Delete_Keywords WHERE DELETE_KEYWORD=" +  "\""+keyword+  "\"");
+        return true;
+        //return mDB.delete(DeleteKeywordDataBases.CreateDB._TABLE, "DELETE_KEYWORD="+keyword, null) > 0;
+    }
     // Select DB
     public Cursor selectColumns(){
         return mDB.query(DeleteKeywordDataBases.CreateDB._TABLE, null, null, null, null, null, null);
