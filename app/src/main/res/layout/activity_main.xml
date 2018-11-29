@@ -30,6 +30,7 @@
         android:layout_weight="8">
 
         <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/sr_layout">
@@ -39,16 +40,6 @@
             android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
-
-        <at.markushi.ui.CircleButton
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_margin="20dp"
-            android:padding="15dp"
-            android:layout_gravity="right|bottom"
-            android:src="@drawable/ic_recyclebin"
-            app:cb_color="#99CC00"
-            app:cb_pressedRingWidth="8dip" />
 
     </FrameLayout>
 </LinearLayout>

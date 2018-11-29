@@ -17,12 +17,14 @@ import com.example.kimdoyeon.smsmanager.ListViewAdapter.DeleteKeywordListViewAda
 
 import java.util.ArrayList;
 
+import info.hoang8f.widget.FButton;
+
 public class DeleteKeywordActivity extends Activity {
 
     private DeleteKeywordDbOpenHelper mDbOpenHelper;
 
 
-    Button btn_addKeyword;
+    FButton btn_addKeyword;
     ListView delete_keyword_listView;
     DeleteKeywordListViewAdapter adapter;
 
@@ -34,7 +36,7 @@ public class DeleteKeywordActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_keyword);
 
-        btn_addKeyword = (Button) findViewById(R.id.btn_addKeyword);
+        btn_addKeyword = (FButton) findViewById(R.id.btn_addKeyword);
         btn_addKeyword.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {

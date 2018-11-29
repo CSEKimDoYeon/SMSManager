@@ -20,11 +20,13 @@ import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 
 import java.util.ArrayList;
 
+import info.hoang8f.widget.FButton;
+
 public class ImportantMessagesActivity extends Activity {
 
     private ImportantMessagesDbOpenHelper mDbOpenHelper;
 
-    Button btn_open_important_keyword_list;
+    FButton btn_open_important_keyword_list;
 
     ListView important_messages_listview;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -38,7 +40,7 @@ public class ImportantMessagesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_important_activity);
 
-        btn_open_important_keyword_list = (Button) findViewById(R.id.btn_important_keyword_list);
+        btn_open_important_keyword_list = (FButton) findViewById(R.id.btn_important_keyword_list);
         btn_open_important_keyword_list.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {

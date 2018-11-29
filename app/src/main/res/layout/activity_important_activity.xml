@@ -2,13 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <Button
+
+    <info.hoang8f.widget.FButton
         android:id="@+id/btn_important_keyword_list"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="중요 Keyword 목록 보기"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:minHeight="@dimen/demo_button_min_height"
+        android:minWidth="@dimen/demo_button_min_width"
+        android:text="중요 Keyword 목록 보기"
+        fbutton:buttonColor="@color/fbutton_color_turquoise"
+        android:textColor="@android:color/white"
+        />
+
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
