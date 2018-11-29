@@ -173,13 +173,15 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.first_navigation_item:
-                        Toast.makeText(MainActivity.this, "첫번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Intent intent1 = new Intent(MainActivity.this, ImportantMessagesActivity.class);
+                        startActivity(intent1);
                         break;
+
                     case R.id.second_navigation_item:
-                        Toast.makeText(MainActivity.this, "두번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this, DeleteKeywordActivity.class);
-                        startActivity(intent);
+                        Intent intent2 = new Intent(MainActivity.this, DeleteKeywordActivity.class);
+                        startActivity(intent2);
                         break;
+
                     case R.id.third_navigation_item:
                         Toast.makeText(MainActivity.this, "세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
                         break;
@@ -276,12 +278,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showDatabase(String sort) {
+
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         Log.e("showDatabase", "DB Size: " + iCursor.getCount());
         //arrayData.clear();
         // arrayIndex.clear();
         while (iCursor.moveToNext()) {
-
             //long _id = iCursor.getLong(iCursor.getColumnIndex("_id"));
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
@@ -299,5 +301,11 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < mArray.size(); i++) {
             adapter.addItem(mArray.get(i).getMessage_Address(), mArray.get(i).getMessage_Body());
         }
+    }
+
+    public boolean deleteSMSIncludeDeleteKeyword(String body){
+        // 삭제 키워드 디비를 열어서 모든 keyword를 ArrayList에 넣고, body에 포함되어있는지 확인한다.
+
+        return true;
     }
 }

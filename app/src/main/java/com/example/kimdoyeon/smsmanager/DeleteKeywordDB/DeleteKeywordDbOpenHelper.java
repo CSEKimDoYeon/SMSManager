@@ -76,7 +76,7 @@ public class DeleteKeywordDbOpenHelper {
         return mDB.delete(DeleteKeywordDataBases.CreateDB._TABLE, "_id="+id, null) > 0;
     }
 
-    public boolean deleteColumnForKeyword(String keyword){
+    public boolean deleteColumnForKeyword(String keyword){ // 리스트에서 누른 아이템과 일치하는 데이터를 삭제한다.
         mDB.execSQL("DELETE FROM Delete_Keywords WHERE DELETE_KEYWORD=" +  "\""+keyword+  "\"");
         return true;
         //return mDB.delete(DeleteKeywordDataBases.CreateDB._TABLE, "DELETE_KEYWORD="+keyword, null) > 0;
@@ -85,6 +85,7 @@ public class DeleteKeywordDbOpenHelper {
     public Cursor selectColumns(){
         return mDB.query(DeleteKeywordDataBases.CreateDB._TABLE, null, null, null, null, null, null);
     }
+
 
     // sort by column
     public Cursor sortColumn(String sort){
