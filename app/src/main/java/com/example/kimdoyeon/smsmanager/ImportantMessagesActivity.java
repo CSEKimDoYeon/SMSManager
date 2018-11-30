@@ -47,8 +47,8 @@ public class ImportantMessagesActivity extends Activity {
                 // TODO : click event
 
                 /*중요 키워드 목록으로 이동하도록 구현할 것.*/
-                //Intent intent = new Intent(ImportantMessagesActivity.this, AddDeleteKeywordActivity.class);
-                //startActivityForResult(intent, 1000);
+                Intent intent = new Intent(ImportantMessagesActivity.this, ImportantKeywordsActivity.class);
+                startActivityForResult(intent, 1000);
 
             }
         });

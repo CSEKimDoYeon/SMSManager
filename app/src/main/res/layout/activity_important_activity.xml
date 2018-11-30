@@ -15,6 +15,7 @@
         android:minHeight="@dimen/demo_button_min_height"
         android:minWidth="@dimen/demo_button_min_width"
         android:text="중요 Keyword 목록 보기"
+        android:backgroundTint="#278bf6"
         fbutton:buttonColor="@color/fbutton_color_turquoise"
         android:textColor="@android:color/white"
         />
