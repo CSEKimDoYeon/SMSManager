@@ -15,7 +15,7 @@ public final class ImportantMessagesDataBases {
 
         public static final String _CREATE0 = "create table if not exists "+ _TABLE +"("
                 + _ID+" integer primary key autoincrement, "
-                + MESSAGE_ID+" integer not null , "
+                + MESSAGE_ID+" integer not null unique , "
                 + THREAD_ID +" integer not null , "
                 + MESSAGE_ADDRESS +" text not null , "
                 + MESSAGE_TIME +" integer not null , "

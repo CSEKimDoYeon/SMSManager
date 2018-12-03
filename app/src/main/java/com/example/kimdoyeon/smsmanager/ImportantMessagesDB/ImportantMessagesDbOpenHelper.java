@@ -93,7 +93,7 @@ public class ImportantMessagesDbOpenHelper {
 
     // sort by column
     public Cursor sortColumn(String sort){
-        Cursor c = mDB.rawQuery( "SELECT * FROM Messages ORDER BY " + sort + " DESC"+";", null);
+        Cursor c = mDB.rawQuery( "SELECT * FROM Important_Messages ORDER BY " + sort + " DESC"+";", null);
         return c;
     }
 }

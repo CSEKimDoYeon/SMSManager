@@ -20,8 +20,8 @@
             android:layout_margin="10dp"
             android:minHeight="@dimen/demo_button_min_height"
             android:minWidth="@dimen/demo_button_min_width"
-            android:text="중요 Keyword 추가"
-            android:backgroundTint="@color/colorAccent"
+            android:text="중요 Keyword 추가 +"
+            android:backgroundTint="#278bf6"
             fbutton:buttonColor="@color/fbutton_color_turquoise"
             android:textColor="@android:color/white"
             />

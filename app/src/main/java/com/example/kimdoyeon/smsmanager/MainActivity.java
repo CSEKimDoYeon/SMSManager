@@ -182,6 +182,18 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+    @Override
+    protected void onStop() {
+        drawerLayout.closeDrawer(Gravity.LEFT);
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        readSMSMessage();
+        super.onRestart();
+    }
+
     private void setUpDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
