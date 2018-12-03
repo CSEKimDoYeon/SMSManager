@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,8 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
-import com.example.kimdoyeon.smsmanager.ListViewAdapter.DeleteKeywordListViewAdapter;
+import com.example.kimdoyeon.smsmanager.ImportantKeywordDB.ImportantKeywordsDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.ImportantKeywordsListViewAdapter;
 
 import java.util.ArrayList;
@@ -22,14 +19,13 @@ import java.util.ArrayList;
 import info.hoang8f.widget.FButton;
 
 public class ImportantKeywordsActivity extends Activity {
-    private DeleteKeywordDbOpenHelper mDbOpenHelper;
+    private ImportantKeywordsDbOpenHelper mDbOpenHelper;
 
     FButton btn_add_Important_Keyword;
 
-    RecyclerView mRecyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
 
-    DeleteKeywordListViewAdapter adapter;
+    ListView important_keyword_listView;
+    ImportantKeywordsListViewAdapter adapter;
 
     String sort = "_id";
 
@@ -44,49 +40,31 @@ public class ImportantKeywordsActivity extends Activity {
             @Override
             public void onClick(View view) {
                 // TODO : click event
-                /*ntent intent = new Intent(DeleteKeywordActivity.this, AddDeleteKeywordActivity.class);
+                Intent intent = new Intent(ImportantKeywordsActivity.this, AddImportantKeywordActivity.class);
 
-                startActivityForResult(intent, 1000);*/
+                startActivityForResult(intent, 1000);
             }
         });
 
         /*--------------------------------ListView 정의------------------------------------------*/
 
         //delete_keyword_listView = (ListView) findViewById(R.id.list_delete_keyword);
-
-        mRecyclerView = findViewById(R.id.list_important_keyword);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mArray.add("중요");
-        mArray.add("개중요");
-        mArray.add("중요");
-        mArray.add("개중요");
-        mArray.add("중요");
-        mArray.add("개중요");
-        mArray.add("중요");
-        mArray.add("개중요");
-        mArray.add("중요");
-        mArray.add("개중요");
-        mArray.add("중요");
-        mArray.add("개중요");
-
-        ImportantKeywordsListViewAdapter myAdapter = new ImportantKeywordsListViewAdapter(mArray);
-        mRecyclerView.setAdapter(myAdapter);
+        important_keyword_listView = (ListView) findViewById(R.id.list_important_keyword);
 
 
-        mDbOpenHelper = new DeleteKeywordDbOpenHelper(this);
+
+        mDbOpenHelper = new ImportantKeywordsDbOpenHelper(this);
         mDbOpenHelper.open();
         mDbOpenHelper.create();
 
         /*mDbOpenHelper.insertColumn("광고");
         mDbOpenHelper.insertColumn("스팸");*/
 
-        //showDatabase(sort);
+        showDatabase(sort);
     }
 
-    /*protected void onActivityResult(int requestCode, int resultCode, Intent data)
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -106,10 +84,9 @@ public class ImportantKeywordsActivity extends Activity {
         }
     }
 
-
     public void showDatabase(String sort) {
         Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
-        adapter = new DeleteKeywordListViewAdapter(this, R.layout.listview_item_delete_keyword, mArray);
+        adapter = new ImportantKeywordsListViewAdapter(this, R.layout.listview_item_important_keyword, mArray);
 
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         Log.e("showDatabase", "DB Size: " + iCursor.getCount());
@@ -118,15 +95,15 @@ public class ImportantKeywordsActivity extends Activity {
 
         while (iCursor.moveToNext()) {
             //String delete_keyword = iCursor.getString(iCursor.getColumnIndex("DELETE_KEYWORD"));
-            String delete_keyword = iCursor.getString(1);
-            Log.e("column", "\nDELETE_KEYWORD : " + delete_keyword );
+            String important_keyword = iCursor.getString(1);
+            Log.e("column", "\nIMPORTNAT_KEYWORD : " + important_keyword );
 
-            mArray.add(delete_keyword);
-            adapter.addItem(delete_keyword);
+            mArray.add(important_keyword);
+            adapter.addItem(important_keyword);
         }
 
-        delete_keyword_listView.setAdapter(adapter);
-        delete_keyword_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        important_keyword_listView.setAdapter(adapter);
+        important_keyword_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
@@ -142,5 +119,5 @@ public class ImportantKeywordsActivity extends Activity {
                 //startActivity(intent);
             }
         });
-    }*/
+    }
 }

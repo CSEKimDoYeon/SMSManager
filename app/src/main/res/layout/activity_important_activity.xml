@@ -24,11 +24,14 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="8dp"
         android:id="@+id/sr_layout_important">
     <ListView
         android:id="@+id/list_important_messages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:divider="#000000"
+        android:scrollbars="none"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

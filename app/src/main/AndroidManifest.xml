@@ -26,7 +26,7 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" />
 
         <activity android:name=".AddDeleteKeywordActivity" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar"/>
-
+        <activity android:name=".AddImportantKeywordActivity" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar"/>
 
         <activity android:name=".DeleteKeywordActivity"></activity>
         <activity android:name=".ImportantMessagesActivity"></activity>

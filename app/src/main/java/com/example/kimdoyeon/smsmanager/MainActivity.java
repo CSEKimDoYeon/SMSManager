@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -166,10 +167,20 @@ public class MainActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.btnShowNavigationDrawer:
                     drawerLayout.openDrawer(GravityCompat.START);
+
                     break;
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        } else
+            super.onBackPressed();
+    }
 
     private void setUpDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -259,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("heylee", ++count + "st, Message: " + string);
 
             // << 이부분에 검사해서 삭제키워드가 포함 안되었을 경우에만 아래 기능을 수행한다.
-            if(deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false) {
+            if (deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false) {
                 MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
                 mArray.add(mObj); // ArrayList에 추가.
                 adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
@@ -316,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setDelete_Keyword_Array(){
+    public void setDelete_Keyword_Array() {
         delete_Keyword_Array.clear();
         deleteDbOpenHelper = new DeleteKeywordDbOpenHelper(this);
         deleteDbOpenHelper.open();
@@ -328,16 +339,16 @@ public class MainActivity extends AppCompatActivity {
         while (iCursor.moveToNext()) {
             //String delete_keyword = iCursor.getString(iCursor.getColumnIndex("DELETE_KEYWORD"));
             String delete_keyword = iCursor.getString(1);
-            Log.e("column", "\nDELETE_KEYWORD : " + delete_keyword );
+            Log.e("column", "\nDELETE_KEYWORD : " + delete_keyword);
 
             delete_Keyword_Array.add(delete_keyword);
         }
     }
 
-    public boolean deleteSMSIncludeDeleteKeyword(ArrayList<String> keywords, String body){
+    public boolean deleteSMSIncludeDeleteKeyword(ArrayList<String> keywords, String body) {
         // 삭제 키워드 디비를 열어서 모든 keyword를 ArrayList에 넣고, body에 포함되어있는지 확인한다.
-        for(int i = 0; i<keywords.size() ; i++){
-            if(body.contains(keywords.get(i))){
+        for (int i = 0; i < keywords.size(); i++) {
+            if (body.contains(keywords.get(i))) {
                 return true;
             }
         }

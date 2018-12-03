@@ -30,14 +30,16 @@
         android:layout_weight="8">
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:layout_margin="5dp"
+            android:layout_margin="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/sr_layout">
         <ListView
             android:id="@+id/listview1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:divider="#000000"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
 

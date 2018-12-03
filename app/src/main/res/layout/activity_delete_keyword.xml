@@ -47,7 +47,9 @@
         <ListView
             android:id="@+id/list_delete_keyword"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:divider="#000000"/>
 
         <!--<at.markushi.ui.CircleButton
             android:layout_width="90dp"
