@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="SMS "
+            android:fontFamily="@font/font_godo"
             android:layout_marginLeft="55dp"
             android:textColor="@color/colorAccent"
             android:textSize="20dp" />
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text=" Manager"
+            android:fontFamily="@font/font_godo"
             android:textColor="@color/colorAccent"
             android:textSize="20dp" />
 

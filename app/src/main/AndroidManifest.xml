@@ -33,6 +33,7 @@
         <activity android:name=".ImportantMessagesActivity"></activity>
         <activity android:name=".ImportantKeywordsActivity"></activity>
         <activity android:name=".SpamNumberActivity"></activity>
+        <activity android:name=".DeletedMessageActivity"></activity>
 
         <receiver android:name=".AppWidget.NewAppWidget">
             <intent-filter>

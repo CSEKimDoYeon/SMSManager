@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
+import com.example.kimdoyeon.smsmanager.DeletedMessageDB.DeletedMessageDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.ListViewAdapter;
 import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
@@ -48,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private MainDbOpenHelper mDbOpenHelper; // 메인 DB를 오픈 할 Helper.
     private DeleteKeywordDbOpenHelper deleteDbOpenHelper; // DeleteKeywordDb를 오픈할 Helper.
-    private SpamNumberDbOpenHelper spamDbOpenHelper; // 스팸번호 DB를 오픈할 Helper
+    private SpamNumberDbOpenHelper spamDbOpenHelper; // 스팸번호 DB를 오픈할 Helper.
+    private DeletedMessageDbOpenHelper deletedMessageDbOpenHelper; // 삭제된 메시지 DB를 오픈할 Helper.
 
     ListView listView;
     ListViewAdapter adapter;
@@ -218,6 +220,10 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent3 = new Intent(MainActivity.this, SpamNumberActivity.class);
                         startActivity(intent3);
                         break;
+                    case R.id.fourth_navigation_item:
+                        Intent intent4 = new Intent(MainActivity.this, DeletedMessageActivity.class);
+                        startActivity(intent4);
+                        break;
                 }
                 return false;
             }
@@ -258,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
 
     public int readSMSMessage() {
         mDbOpenHelper.deleteAllColumns(); // 메인 디비를 전부 지운다.
+
+        deletedMessageDbOpenHelper = new DeletedMessageDbOpenHelper(this);
+        deletedMessageDbOpenHelper.open();
+        deletedMessageDbOpenHelper.create();
+        deletedMessageDbOpenHelper.deleteAllColumns();
+
         /*DeleteKeyword 디비에서 데이터 가져온다*/
         setDelete_Keyword_Array();
         setSpam_Num_Array();
@@ -296,6 +308,9 @@ public class MainActivity extends AppCompatActivity {
                 adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
                 mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
             }
+            else
+                deletedMessageDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+                // 위에 해당하지 않으면 삭제메시지 DB로 보낸다.
             // ------------------------------------------------------------------------------
         }
         showDatabase(sort);
@@ -341,11 +356,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addAllOfData_To_ListView(ArrayList<MessageObj> mArray) {
-        for (int i = 0; i < mArray.size(); i++) {
-            adapter.addItem(mArray.get(i).getMessage_Address(), mArray.get(i).getMessage_Body());
-        }
-    }
 
     public void setDelete_Keyword_Array() {
         delete_Keyword_Array.clear();

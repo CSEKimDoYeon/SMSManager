@@ -66,8 +66,6 @@ public class ImportantMessagesListViewAdapter extends ArrayAdapter {
 
         ArrayList<String> keywords = listViewItem.getImportant_Keywords();
         //String impKeyword = keywords.get(0);
-        Log.e("Keywords.length", "\nLength : " + keywords.size() );
-
 
         // 아이템 내 각 위젯에 데이터 반영
         //iconImageView.setImageDrawable(listViewItem.getIcon());

@@ -49,6 +49,7 @@ public class ListViewAdapter extends ArrayAdapter {
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
+            setImp_Keywords_Array();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.listview_item, parent, false);
         }
@@ -68,7 +69,7 @@ public class ListViewAdapter extends ArrayAdapter {
         titleTextView.setText(listViewItem.getMessage_Address());
         descTextView.setText(listViewItem.getMessage_Body());
 
-        setImp_Keywords_Array();
+
 
         if(IsSMSIncludeImportantKeyword(imp_Keywords,listViewItem.getMessage_Body()) == true){
             isImpTextView.setVisibility(View.VISIBLE);
@@ -113,7 +114,6 @@ public class ListViewAdapter extends ArrayAdapter {
 
         while (iCursor.moveToNext()) {
             String keyword = iCursor.getString(1);
-            Log.e("column", "\nIMPORTANT_KEYWORD : " + keyword);
             imp_Keywords.add(keyword);
         }
     }
@@ -121,7 +121,6 @@ public class ListViewAdapter extends ArrayAdapter {
     public boolean IsSMSIncludeImportantKeyword(ArrayList<String> imp_Keywords, String body) {
         for (int i = 0; i < imp_Keywords.size(); i++) {
             if (body.contains(imp_Keywords.get(i))) {
-                Log.e("IsContain", "\nboolean : " + true);
                 return true; // address가 스팸번호와 같다면 true를 리턴한다.
             }
         }
