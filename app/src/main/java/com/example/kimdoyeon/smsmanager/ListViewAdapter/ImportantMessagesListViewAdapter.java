@@ -113,14 +113,4 @@ public class ImportantMessagesListViewAdapter extends ArrayAdapter {
         listViewItemList.add(item);
     }
 
-
-    public static SpannableString getUnderLineColorText(String string, String targetString, int color) {
-        SpannableString spannableString = new SpannableString(string);
-        int targetStartIndex = string.indexOf(targetString);
-        int targetEndIndex = targetStartIndex + targetString.length();
-        spannableString.setSpan(new ForegroundColorSpan(color), targetStartIndex, targetEndIndex, SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new UnderlineSpan(), targetStartIndex, targetEndIndex, SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return spannableString;
-    }
 }

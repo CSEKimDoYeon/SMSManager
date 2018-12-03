@@ -1,13 +1,18 @@
 package com.example.kimdoyeon.smsmanager.ListViewAdapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.kimdoyeon.smsmanager.ImportantKeywordDB.ImportantKeywordsDbOpenHelper;
+import com.example.kimdoyeon.smsmanager.ImportantMessagesDB.ImportantMessagesDbOpenHelper;
+import com.example.kimdoyeon.smsmanager.MainActivity;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 import com.example.kimdoyeon.smsmanager.R;
 
@@ -16,6 +21,10 @@ import java.util.ArrayList;
 public class ListViewAdapter extends ArrayAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<MessageObj> listViewItemList = new ArrayList<MessageObj>() ;
+
+    private ArrayList<String> imp_Keywords = new ArrayList<String>();
+    private ImportantKeywordsDbOpenHelper impDbOpenHelper;
+    String sorte_Keyword = "_id";
 
     // ListViewAdapter의 생성자
 
@@ -33,6 +42,8 @@ public class ListViewAdapter extends ArrayAdapter {
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+
         final int pos = position;
         final Context context = parent.getContext();
 
@@ -47,6 +58,7 @@ public class ListViewAdapter extends ArrayAdapter {
        // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
         TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
+        TextView isImpTextView = (TextView) convertView.findViewById(R.id.tv_isImportant);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         MessageObj listViewItem = listViewItemList.get(position);
@@ -55,6 +67,13 @@ public class ListViewAdapter extends ArrayAdapter {
         //iconImageView.setImageDrawable(listViewItem.getIcon());
         titleTextView.setText(listViewItem.getMessage_Address());
         descTextView.setText(listViewItem.getMessage_Body());
+
+        setImp_Keywords_Array();
+
+        if(IsSMSIncludeImportantKeyword(imp_Keywords,listViewItem.getMessage_Body()) == true){
+            isImpTextView.setVisibility(View.VISIBLE);
+        }else
+            isImpTextView.setVisibility(View.GONE);
 
         return convertView;
     }
@@ -73,6 +92,7 @@ public class ListViewAdapter extends ArrayAdapter {
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
     public void addItem(String address, String body) {
+
         MessageObj item = new MessageObj();
 
         //item.setIcon(icon);
@@ -80,5 +100,31 @@ public class ListViewAdapter extends ArrayAdapter {
         item.setMessage_Body(body);
 
         listViewItemList.add(item);
+    }
+
+
+    public void setImp_Keywords_Array() {
+        imp_Keywords.clear();
+        impDbOpenHelper = new ImportantKeywordsDbOpenHelper(getContext());
+        impDbOpenHelper.open();
+        impDbOpenHelper.create();
+
+        Cursor iCursor = impDbOpenHelper.sortColumn(sorte_Keyword);
+
+        while (iCursor.moveToNext()) {
+            String keyword = iCursor.getString(1);
+            Log.e("column", "\nIMPORTANT_KEYWORD : " + keyword);
+            imp_Keywords.add(keyword);
+        }
+    }
+
+    public boolean IsSMSIncludeImportantKeyword(ArrayList<String> imp_Keywords, String body) {
+        for (int i = 0; i < imp_Keywords.size(); i++) {
+            if (body.contains(imp_Keywords.get(i))) {
+                Log.e("IsContain", "\nboolean : " + true);
+                return true; // address가 스팸번호와 같다면 true를 리턴한다.
+            }
+        }
+        return false;
     }
 }
