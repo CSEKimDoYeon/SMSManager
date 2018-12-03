@@ -238,4 +238,9 @@ public class ImportantMessagesActivity extends Activity {
     }
 
 
+    @Override
+    protected void onRestart() {
+        showDatabase(sort);
+        super.onRestart();
+    }
 }
