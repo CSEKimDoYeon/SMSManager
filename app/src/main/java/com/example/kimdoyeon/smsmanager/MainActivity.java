@@ -33,6 +33,7 @@ import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelpe
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.ListViewAdapter;
 import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
+import com.example.kimdoyeon.smsmanager.SpamNumberDB.SpamNumberDbOpenHelper;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainDbOpenHelper mDbOpenHelper; // 메인 DB를 오픈 할 Helper.
     private DeleteKeywordDbOpenHelper deleteDbOpenHelper; // DeleteKeywordDb를 오픈할 Helper.
+    private SpamNumberDbOpenHelper spamDbOpenHelper; // 스팸번호 DB를 오픈할 Helper
 
     ListView listView;
     ListViewAdapter adapter;
@@ -54,8 +56,11 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     public ArrayList<String> delete_Keyword_Array = new ArrayList<String>();
+    public ArrayList<String> spam_Number_Array = new ArrayList<String>();
+
     static final int SMS_READ_PERMISSON = 1;
     static final int SMS_SEND_PERMISSON = 1;
+
     String sort = "message_id";
     String sort_Delete_Keyword = "_id";
 
@@ -210,7 +215,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.third_navigation_item:
-                        Toast.makeText(MainActivity.this, "세번째 Navigation Item 입니다", Toast.LENGTH_SHORT).show();
+                        Intent intent3 = new Intent(MainActivity.this, SpamNumberActivity.class);
+                        startActivity(intent3);
                         break;
                 }
                 return false;
@@ -254,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
         mDbOpenHelper.deleteAllColumns(); // 메인 디비를 전부 지운다.
         /*DeleteKeyword 디비에서 데이터 가져온다*/
         setDelete_Keyword_Array();
+        setSpam_Num_Array();
         /*--------------------------------------*/
 
         mArray.clear();
@@ -281,8 +288,9 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("heylee", ++count + "st, Message: " + string);
 
-            // << 이부분에 검사해서 삭제키워드가 포함 안되었을 경우에만 아래 기능을 수행한다.
-            if (deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false) {
+            // << 이부분에 검사해서 삭제키워드가 포함 안되었고, 스팸번호가 아닐 경우에만 아래 기능을 수행한다.
+            if (deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false
+                    && deleteSMSIncludeSpamNum(spam_Number_Array, address) == false) {
                 MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
                 mArray.add(mObj); // ArrayList에 추가.
                 adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
@@ -366,4 +374,31 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    public void setSpam_Num_Array() {
+        spam_Number_Array.clear();
+        spamDbOpenHelper = new SpamNumberDbOpenHelper(this);
+        spamDbOpenHelper.open();
+        spamDbOpenHelper.create();
+
+        Cursor iCursor = spamDbOpenHelper.sortColumn(sort_Delete_Keyword);
+        Log.e("showDatabase", "DB Size: " + iCursor.getCount());
+
+        while (iCursor.moveToNext()) {
+            String spam_Num = iCursor.getString(1);
+            Log.e("column", "\nSPAM_NUM : " + spam_Num);
+
+            spam_Number_Array.add(spam_Num);
+        }
+    }
+
+    public boolean deleteSMSIncludeSpamNum(ArrayList<String> numbers, String address) {
+        for (int i = 0; i < numbers.size(); i++) {
+            if (address.equals(numbers.get(i))) {
+                return true; // address가 스팸번호와 같다면 true를 리턴한다.
+            }
+        }
+        return false;
+    }
+
 }
