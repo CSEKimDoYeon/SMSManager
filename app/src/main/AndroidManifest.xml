@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
@@ -45,5 +46,15 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/new_app_widget_info" />
         </receiver>
+
+
+        <receiver android:name=".BroadCast.SMS_Receiver">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+
+
+
     </application>
 </manifest>

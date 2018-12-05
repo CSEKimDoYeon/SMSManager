@@ -1,8 +1,11 @@
 package com.example.kimdoyeon.smsmanager;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -74,10 +77,24 @@ public class MainActivity extends AppCompatActivity {
 
     Button Ads_btn;
 
+    private int REQ = 10;
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
+                Toast.makeText(getApplicationContext(), "SMS RECEIVE", Toast.LENGTH_SHORT).show();
+                readSMSMessage();
+            }
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         /*-------------Navigation Drawer------------*/
         toolbar = (Toolbar) findViewById(R.id.toolbarInclude);
@@ -113,17 +130,17 @@ public class MainActivity extends AppCompatActivity {
         /*----------------------------------------------------------------------------------------*/
 
 
-        int permissonCheck_ReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        /*int permissonCheck_ReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         if (permissonCheck_ReadContact == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getApplicationContext(), "연락처 읽기 권한 있음", Toast.LENGTH_SHORT).show();
 
 
-            /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+            *//*---------읽기 권한 있으면 연락처를 가져온다.------------*//*
             ContactUtil ct = new ContactUtil(this);
             contactArray = ct.getContactList();
             Log.e("contactArray", "ContactList_size : " + contactArray.size());
             Log.e("contactArray", "Contact : " + contactArray.get(0).getName() + "/" + contactArray.get(0).getPhonenum());
-            /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+            *//*---------읽기 권한 있으면 연락처를 가져온다.------------*//*
 
 
 
@@ -190,9 +207,44 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_SEND_PERMISSON);
             }
-        }
+        }*/
 
+        int permissonCheck_SendSMS = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS);
+        int permissonCheck_ReadSMS = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_SMS);
+        int permissonCheck_ReceiveSMS = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECEIVE_SMS);
+        int permissonCheck_ReadContacts = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS);
+
+        if(permissonCheck_SendSMS == PackageManager.PERMISSION_DENIED || permissonCheck_ReadSMS == PackageManager.PERMISSION_DENIED ||
+                permissonCheck_ReceiveSMS == PackageManager.PERMISSION_DENIED ||
+                permissonCheck_ReadContacts == PackageManager.PERMISSION_DENIED ) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS
+                            , Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS},
+                    REQ);
+        }else{
+            start();
+        }
     }
+
+    public void start(){
+        /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+        ContactUtil ct = new ContactUtil(this);
+        contactArray = ct.getContactList();
+        Log.e("contactArray", "ContactList_size : " + contactArray.size());
+        Log.e("contactArray", "Contact : " + contactArray.get(0).getName() + "/" + contactArray.get(0).getPhonenum());
+        /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+
+        mDbOpenHelper = new MainDbOpenHelper(this);
+        mDbOpenHelper.open();
+        mDbOpenHelper.create();
+
+        deletedMessageDbOpenHelper = new DeletedMessageDbOpenHelper(this);
+        deletedMessageDbOpenHelper.open();
+        deletedMessageDbOpenHelper.create();
+
+        readSMSMessage();
+    }
+
 
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -225,6 +277,20 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(Gravity.LEFT);
         } else
             super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -280,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //Toast.makeText(getApplicationContext(), "SMS읽기 승인함", Toast.LENGTH_SHORT).show();
 
-                    mDbOpenHelper = new MainDbOpenHelper(this);
+                    /*mDbOpenHelper = new MainDbOpenHelper(this);
                     mDbOpenHelper.open();
                     mDbOpenHelper.create();
 
@@ -288,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     deletedMessageDbOpenHelper.open();
                     deletedMessageDbOpenHelper.create();
 
-                    readSMSMessage();
+                    readSMSMessage();*/
                 } else {
                     //Toast.makeText(getApplicationContext(), "SMS읽기 거부함", Toast.LENGTH_SHORT).show();
                 }
@@ -305,6 +371,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int readSMSMessage() {
+
+
         mDbOpenHelper.deleteAllColumns(); // 메인 디비를 전부 지운다.
         deletedMessageDbOpenHelper.deleteAllColumns();
 
