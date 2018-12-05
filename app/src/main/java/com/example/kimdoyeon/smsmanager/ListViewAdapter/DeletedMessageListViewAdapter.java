@@ -67,6 +67,7 @@ public class DeletedMessageListViewAdapter extends ArrayAdapter {
         // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1);
         TextView descTextView = (TextView) convertView.findViewById(R.id.textView2);
+        TextView dateTextView = (TextView) convertView.findViewById(R.id.tv_date);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         MessageObj listViewItem = listViewItemList.get(position);
@@ -74,9 +75,16 @@ public class DeletedMessageListViewAdapter extends ArrayAdapter {
 
         // 아이템 내 각 위젯에 데이터 반영
         //iconImageView.setImageDrawable(listViewItem.getIcon());
-        titleTextView.setText(listViewItem.getMessage_Address());
-        descTextView.setText(listViewItem.getMessage_Body());
 
+        descTextView.setText(listViewItem.getMessage_Body());
+        dateTextView.setText(listViewItem.getMessage_Time());
+
+        if (listViewItem.getName().equals("")) {
+            titleTextView.setText(listViewItem.getMessage_Address());
+        } // 만약 이름을 가지고 있다면 이름으로 대체한다.
+        else {
+            titleTextView.setText(listViewItem.getName());
+        }
 
 
         Spannable span = (Spannable) descTextView.getText(); // 메시지 바디를 가져오고
@@ -120,12 +128,14 @@ public class DeletedMessageListViewAdapter extends ArrayAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String address, String body) {
+    public void addItem(String address, String body, String date, String name) {
         MessageObj item = new MessageObj();
 
         //item.setIcon(icon);
         item.setMessage_Address(address);
         item.setMessage_Body(body);
+        item.setMessage_Time(date);
+        item.setName(name);
 
         listViewItemList.add(item);
     }

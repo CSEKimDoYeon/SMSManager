@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DeletedMessageDbOpenHelper {
-    private static final String DATABASE_NAME = "InnerDatabase(SQLite).db";
+    private static final String DATABASE_NAME = "InnerDatabase(SQLite)_sms.db";
     private static final int DATABASE_VERSION = 1;
     public static SQLiteDatabase mDB;
     private DeletedMessageDatabaseHelper mDBHelper;
@@ -52,24 +52,26 @@ public class DeletedMessageDbOpenHelper {
     }
 
     // Insert DB
-    public long insertColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public long insertColumn(long messageId, long threadId, String address , String timestamp, String body, String name){
         ContentValues values = new ContentValues();
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(DeletedMessageDataBases.CreateDB.THREAD_ID, threadId);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_ADDRESS, address);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_BODY, body);
+        values.put(DeletedMessageDataBases.CreateDB.NAME, name);
         return mDB.insert(DeletedMessageDataBases.CreateDB._TABLE, null, values);
     }
 
     // Update DB
-    public boolean updateColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public boolean updateColumn(long messageId, long threadId, String address , String timestamp, String body, String name){
         ContentValues values = new ContentValues();
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(DeletedMessageDataBases.CreateDB.THREAD_ID, threadId);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_ADDRESS, address);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(DeletedMessageDataBases.CreateDB.MESSAGE_BODY, body);
+        values.put(DeletedMessageDataBases.CreateDB.NAME, name);
         // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;
         return mDB.update(DeletedMessageDataBases.CreateDB._TABLE, values, null, null) > 0;
     }
@@ -91,7 +93,7 @@ public class DeletedMessageDbOpenHelper {
 
     // sort by column
     public Cursor sortColumn(String sort){
-        Cursor c = mDB.rawQuery( "SELECT * FROM Deleted_Messages ORDER BY " + sort + ";", null);
+        Cursor c = mDB.rawQuery( "SELECT * FROM Deleted_Messages ORDER BY " + sort + " DESC"+";", null);
         return c;
     }
 }

@@ -10,6 +10,7 @@ public final class ImportantMessagesDataBases {
         public static final String MESSAGE_ADDRESS = "message_address";
         public static final String MESSAGE_TIME = "message_time";
         public static final String MESSAGE_BODY = "message_body";
+        public static final String NAME = "name";
 
         public static final String _TABLE = "Important_Messages";
 
@@ -18,7 +19,8 @@ public final class ImportantMessagesDataBases {
                 + MESSAGE_ID+" integer not null unique , "
                 + THREAD_ID +" integer not null , "
                 + MESSAGE_ADDRESS +" text not null , "
-                + MESSAGE_TIME +" integer not null , "
+                + NAME +" text , "
+                + MESSAGE_TIME +" text not null , "
                 + MESSAGE_BODY +" text not null );";
     }
 }

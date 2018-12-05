@@ -20,6 +20,7 @@ public class MessageActivity extends Activity {
 
     public String message_Address;
     public String message_Body;
+    public String message_Name;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +54,16 @@ public class MessageActivity extends Activity {
 
         message_Address = getIntent().getStringExtra("key_Address");
         message_Body = getIntent().getStringExtra("key_Body");
+        message_Name = getIntent().getStringExtra("key_Name");
 
-        tv_Address.setText(message_Address);
+
+        if (message_Name.equals("")) {
+            tv_Address.setText(message_Address);
+        } // 만약 이름을 가지고 있다면 이름으로 대체한다.
+        else {
+            tv_Address.setText(message_Name);
+        }
+
         tv_Body.setText(message_Body);
     }
 }

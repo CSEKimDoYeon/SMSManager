@@ -20,7 +20,9 @@ import com.example.kimdoyeon.smsmanager.DeletedMessageDB.DeletedMessageDbOpenHel
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.DeletedMessageListViewAdapter;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import info.hoang8f.widget.FButton;
 
@@ -98,17 +100,18 @@ public class DeletedMessageActivity extends Activity {
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
             String address = iCursor.getString(iCursor.getColumnIndex("message_address"));
-            long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
+            String message_time = iCursor.getString(iCursor.getColumnIndex("message_time"));
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
+            String name = iCursor.getString(iCursor.getColumnIndex("name"));
 
             Log.e("column", "message_id : " + message_id + " / thread_id : " + thread_id + " / address : " + address +
                     " / message_time : " + message_time + " / body : " + body + "\n");
 
 
             MessageObj mObj = new MessageObj(message_id, thread_id, address, message_time,
-                    body); // 중요 메시지는 중요 키워드들의 ArrayList를 동봉.
+                    body, name); // 중요 메시지는 중요 키워드들의 ArrayList를 동봉.
             mArray.add(mObj); // ArrayList에 추가.
-            adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
+            adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body(),mObj.getMessage_Time(), mObj.getName());
 
         }
         adapter.notifyDataSetChanged();
@@ -122,10 +125,12 @@ public class DeletedMessageActivity extends Activity {
 
                 String Address = mObj.getMessage_Address();
                 String Body = mObj.getMessage_Body();
+                String Name = mObj.getName();
 
                 Intent intent = new Intent(DeletedMessageActivity.this, MessageActivity.class);
                 intent.putExtra("key_Address", Address);
                 intent.putExtra("key_Body", Body);
+                intent.putExtra("key_Name", Name);
                 startActivity(intent);
             }
         });

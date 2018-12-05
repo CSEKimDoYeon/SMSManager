@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class ImportantMessagesDbOpenHelper {
 
-    private static final String DATABASE_NAME = "InnerDatabase(SQLite).db";
+    private static final String DATABASE_NAME = "InnerDatabase(SQLite)_sms.db";
     private static final int DATABASE_VERSION = 1;
     public static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
@@ -54,22 +54,24 @@ public class ImportantMessagesDbOpenHelper {
     }
 
     // Insert DB
-    public long insertColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public long insertColumn(long messageId, long threadId, String address , String timestamp, String body, String name){
         ContentValues values = new ContentValues();
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(ImportantMessagesDataBases.CreateDB.THREAD_ID, threadId);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_ADDRESS, address);
+        values.put(ImportantMessagesDataBases.CreateDB.NAME, name);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_BODY, body);
         return mDB.insert(ImportantMessagesDataBases.CreateDB._TABLE, null, values);
     }
 
     // Update DB
-    public boolean updateColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public boolean updateColumn(long messageId, long threadId, String address , String timestamp, String body, String name){
         ContentValues values = new ContentValues();
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(ImportantMessagesDataBases.CreateDB.THREAD_ID, threadId);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_ADDRESS, address);
+        values.put(ImportantMessagesDataBases.CreateDB.NAME, name);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(ImportantMessagesDataBases.CreateDB.MESSAGE_BODY, body);
         // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;

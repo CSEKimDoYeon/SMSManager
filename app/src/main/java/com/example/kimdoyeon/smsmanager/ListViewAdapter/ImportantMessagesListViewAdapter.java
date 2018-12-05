@@ -59,6 +59,7 @@ public class ImportantMessagesListViewAdapter extends ArrayAdapter {
         // ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1);
         TextView descTextView = (TextView) convertView.findViewById(R.id.textView2);
+        TextView dateTextView = (TextView) convertView.findViewById(R.id.tv_date);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         MessageObj_Important listViewItem = listViewItemList.get(position);
@@ -69,14 +70,22 @@ public class ImportantMessagesListViewAdapter extends ArrayAdapter {
 
         // 아이템 내 각 위젯에 데이터 반영
         //iconImageView.setImageDrawable(listViewItem.getIcon());
-        titleTextView.setText(listViewItem.getMessage_Address());
+
         descTextView.setText(listViewItem.getMessage_Body());
+        dateTextView.setText(listViewItem.getMessage_Time());
+
+        if (listViewItem.getName().equals("")) {
+            titleTextView.setText(listViewItem.getMessage_Address());
+        } // 만약 이름을 가지고 있다면 이름으로 대체한다.
+        else {
+            titleTextView.setText(listViewItem.getName());
+        }
 
         Spannable span = (Spannable) descTextView.getText(); // 메시지 바디를 가져오고
-        for (int i = 0 ; i<keywords.size() ; i++){
+        for (int i = 0; i < keywords.size(); i++) {
             int targetStartIndex = descTextView.getText().toString().indexOf(keywords.get(i));
             int targetEndIndex = targetStartIndex + keywords.get(i).length();
-            span.setSpan(new BackgroundColorSpan(Color.YELLOW), targetStartIndex,  targetEndIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            span.setSpan(new BackgroundColorSpan(Color.YELLOW), targetStartIndex, targetEndIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
 /*
@@ -99,13 +108,15 @@ public class ImportantMessagesListViewAdapter extends ArrayAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String address, String body, ArrayList<String> keywords) {
+    public void addItem(String address, String body, ArrayList<String> keywords, String date, String name) {
         MessageObj_Important item = new MessageObj_Important();
 
         //item.setIcon(icon);
         item.setMessage_Address(address);
         item.setMessage_Body(body);
         item.setImportant_Keywords(keywords);
+        item.setMessage_Time(date);
+        item.setName(name);
 
 
         listViewItemList.add(item);

@@ -60,6 +60,7 @@ public class ListViewAdapter extends ArrayAdapter {
         TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
         TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
         TextView isImpTextView = (TextView) convertView.findViewById(R.id.tv_isImportant);
+        TextView dateTextView = (TextView) convertView.findViewById(R.id.tv_date);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         MessageObj listViewItem = listViewItemList.get(position);
@@ -68,7 +69,12 @@ public class ListViewAdapter extends ArrayAdapter {
         //iconImageView.setImageDrawable(listViewItem.getIcon());
         titleTextView.setText(listViewItem.getMessage_Address());
         descTextView.setText(listViewItem.getMessage_Body());
+        dateTextView.setText(listViewItem.getMessage_Time());
 
+
+        if(listViewItem.getName() != ""){
+            titleTextView.setText(listViewItem.getName());
+        } // 만약 이름을 가지고 있다면 이름으로 대체한다.
 
 
         if(IsSMSIncludeImportantKeyword(imp_Keywords,listViewItem.getMessage_Body()) == true){
@@ -92,13 +98,15 @@ public class ListViewAdapter extends ArrayAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String address, String body) {
+    public void addItem(String address, String body ,String date, String name) {
 
         MessageObj item = new MessageObj();
 
         //item.setIcon(icon);
         item.setMessage_Address(address);
         item.setMessage_Body(body);
+        item.setMessage_Time(date);
+        item.setName(name);
 
         listViewItemList.add(item);
     }

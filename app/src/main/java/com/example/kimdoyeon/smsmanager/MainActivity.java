@@ -29,6 +29,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.kimdoyeon.smsmanager.Contact.Contact;
+import com.example.kimdoyeon.smsmanager.Contact.ContactUtil;
 import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.DeletedMessageDB.DeletedMessageDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ListViewAdapter.ListViewAdapter;
@@ -36,7 +38,9 @@ import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 import com.example.kimdoyeon.smsmanager.SpamNumberDB.SpamNumberDbOpenHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<MessageObj> mArray = new ArrayList<MessageObj>();
     public ArrayList<String> delete_Keyword_Array = new ArrayList<String>();
     public ArrayList<String> spam_Number_Array = new ArrayList<String>();
+    public ArrayList<Contact> contactArray;
 
     static final int SMS_READ_PERMISSON = 1;
-    static final int SMS_SEND_PERMISSON = 1;
+    static final int SMS_SEND_PERMISSON = 2;
+    static final int READ_CONTACTS_PERMISSION = 3;
 
     String sort = "message_id";
     String sort_Delete_Keyword = "_id";
@@ -107,15 +113,47 @@ public class MainActivity extends AppCompatActivity {
         /*----------------------------------------------------------------------------------------*/
 
 
+        int permissonCheck_ReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        if (permissonCheck_ReadContact == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(), "연락처 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+
+
+            /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+            ContactUtil ct = new ContactUtil(this);
+            contactArray = ct.getContactList();
+            Log.e("contactArray", "ContactList_size : " + contactArray.size());
+            Log.e("contactArray", "Contact : " + contactArray.get(0).getName() + "/" + contactArray.get(0).getPhonenum());
+            /*---------읽기 권한 있으면 연락처를 가져온다.------------*/
+
+
+
+        } else {
+            Toast.makeText(getApplicationContext(), "연락처 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+            //권한설정 dialog에서 거부를 누르면
+            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
+            //단, 사용자가 "Don't ask again"을 체크한 경우
+            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
+                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
+                Toast.makeText(getApplicationContext(), "연락처 읽기 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, READ_CONTACTS_PERMISSION);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, READ_CONTACTS_PERMISSION);
+            }
+        }
+
         //문자 읽기 권한이 부여되어 있는지 확인
         int permissonCheck_Read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
-
         if (permissonCheck_Read == PackageManager.PERMISSION_GRANTED) {
 
             Toast.makeText(getApplicationContext(), "SMS 수신권한 있음", Toast.LENGTH_SHORT).show();
             mDbOpenHelper = new MainDbOpenHelper(this);
             mDbOpenHelper.open();
             mDbOpenHelper.create();
+
+            deletedMessageDbOpenHelper = new DeletedMessageDbOpenHelper(this);
+            deletedMessageDbOpenHelper.open();
+            deletedMessageDbOpenHelper.create();
 
             readSMSMessage();
 
@@ -246,6 +284,10 @@ public class MainActivity extends AppCompatActivity {
                     mDbOpenHelper.open();
                     mDbOpenHelper.create();
 
+                    deletedMessageDbOpenHelper = new DeletedMessageDbOpenHelper(this);
+                    deletedMessageDbOpenHelper.open();
+                    deletedMessageDbOpenHelper.create();
+
                     readSMSMessage();
                 } else {
                     //Toast.makeText(getApplicationContext(), "SMS읽기 거부함", Toast.LENGTH_SHORT).show();
@@ -264,11 +306,9 @@ public class MainActivity extends AppCompatActivity {
 
     public int readSMSMessage() {
         mDbOpenHelper.deleteAllColumns(); // 메인 디비를 전부 지운다.
-
-        deletedMessageDbOpenHelper = new DeletedMessageDbOpenHelper(this);
-        deletedMessageDbOpenHelper.open();
-        deletedMessageDbOpenHelper.create();
         deletedMessageDbOpenHelper.deleteAllColumns();
+
+
 
         /*DeleteKeyword 디비에서 데이터 가져온다*/
         setDelete_Keyword_Array();
@@ -298,18 +338,26 @@ public class MainActivity extends AppCompatActivity {
             string = String.format("msgid:%d, threadid:%d, address:%s, " + "contactid:%d, contackstring:%s, timestamp:%d, body:%s", messageId, threadId, address, contactId,
                     contactId_string, timestamp, body);
 
-            Log.e("heylee", ++count + "st, Message: " + string);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy년 MM월 dd일 kk:mm:ss");
+            Date time_Date = new Date(timestamp);
+            String date = df.format(time_Date);
 
+            Log.e("heylee", ++count + "st, message: " + string);
+
+
+            String name = IsContainName(address); // 만약 없으면 ""을 반환.
             // << 이부분에 검사해서 삭제키워드가 포함 안되었고, 스팸번호가 아닐 경우에만 아래 기능을 수행한다.
             if (deleteSMSIncludeDeleteKeyword(delete_Keyword_Array, body) == false
                     && deleteSMSIncludeSpamNum(spam_Number_Array, address) == false) {
-                MessageObj mObj = new MessageObj(messageId, threadId, address, timestamp, body); // 해당 column을 바탕으로 메시지 객체 생성.
+
+
+                MessageObj mObj = new MessageObj(messageId, threadId, address, date, body, name); // 해당 column을 바탕으로 메시지 객체 생성.
                 mArray.add(mObj); // ArrayList에 추가.
-                adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body());
-                mDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+                adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body(),mObj.getMessage_Time(),mObj.getName());
+                mDbOpenHelper.insertColumn(messageId, threadId, address, date, body,name);
             }
             else
-                deletedMessageDbOpenHelper.insertColumn(messageId, threadId, address, timestamp, body);
+                deletedMessageDbOpenHelper.insertColumn(messageId, threadId, address, date, body, name);
                 // 위에 해당하지 않으면 삭제메시지 DB로 보낸다.
             // ------------------------------------------------------------------------------
         }
@@ -324,16 +372,33 @@ public class MainActivity extends AppCompatActivity {
 
                 String Address = mObj.getMessage_Address();
                 String Body = mObj.getMessage_Body();
+                String Name = mObj.getName();
 
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
                 intent.putExtra("key_Address", Address);
                 intent.putExtra("key_Body", Body);
+                intent.putExtra("key_Name", Name);
                 startActivity(intent);
             }
         });
 
         c.close();
         return 0;
+    }
+
+    public String IsContainName(String address){ // address(01037602575)
+        String name="";
+        for(int i = 0 ; i<contactArray.size(); i++){
+            String temp = contactArray.get(i).getPhonenum();
+            temp = temp.replace("-", "");
+
+            if(temp.equals(address) == true){
+                name = contactArray.get(i).getName();
+                Log.e("nameTamp", name); // ex) 01037602575 (String)
+                break;
+            }
+        }
+        return name;
     }
 
     public void showDatabase(String sort) {
@@ -347,8 +412,9 @@ public class MainActivity extends AppCompatActivity {
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
             String address = iCursor.getString(iCursor.getColumnIndex("message_address"));
-            long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
+            String message_time = iCursor.getString(iCursor.getColumnIndex("message_time"));
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
+
 
             Log.e("column", "message_id : " + message_id + " / thread_id : " + thread_id + " / address : " + address +
                     " / message_time : " + message_time + " / body : " + body + "\n");

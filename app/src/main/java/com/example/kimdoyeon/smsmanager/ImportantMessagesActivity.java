@@ -25,7 +25,9 @@ import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj_Important;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import info.hoang8f.widget.FButton;
 
@@ -129,13 +131,15 @@ public class ImportantMessagesActivity extends Activity {
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
             String address = iCursor.getString(iCursor.getColumnIndex("message_address"));
-            long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
+            String name = iCursor.getString(iCursor.getColumnIndex("name"));
+            String message_time = iCursor.getString(iCursor.getColumnIndex("message_time"));
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
             Log.e("column", "message_id : " + message_id + " / thread_id : " + thread_id + " / address : " + address +
                     " / message_time : " + message_time + " / body : " + body + "\n");
 
-            mDbOpenHelper.insertColumn(message_id, thread_id, address, message_time, body);
+
+            mDbOpenHelper.insertColumn(message_id, thread_id, address, message_time, body, name);
         }
     }
 
@@ -155,7 +159,8 @@ public class ImportantMessagesActivity extends Activity {
             long message_id = iCursor.getLong(iCursor.getColumnIndex("message_id"));
             long thread_id = iCursor.getLong(iCursor.getColumnIndex("thread_id"));
             String address = iCursor.getString(iCursor.getColumnIndex("message_address"));
-            long message_time = iCursor.getLong(iCursor.getColumnIndex("message_time"));
+            String name = iCursor.getString(iCursor.getColumnIndex("name"));
+            String message_time = iCursor.getString(iCursor.getColumnIndex("message_time"));
             String body = iCursor.getString(iCursor.getColumnIndex("message_body"));
 
             Log.e("column", "message_id : " + message_id + " / thread_id : " + thread_id + " / address : " + address +
@@ -164,9 +169,10 @@ public class ImportantMessagesActivity extends Activity {
 
             if (SMSIsContainImportantKeyword(impKeywords, body) != null) { // 중요 키워드를 포함하고 있을 경우만 객체 만들고
                 MessageObj_Important mObj = new MessageObj_Important(message_id, thread_id, address, message_time,
-                        body,SMSIsContainImportantKeyword(impKeywords, body)); // 중요 메시지는 중요 키워드들의 ArrayList를 동봉.
+                        body,SMSIsContainImportantKeyword(impKeywords, body), name); // 중요 메시지는 중요 키워드들의 ArrayList를 동봉.
                 mArray.add(mObj); // ArrayList에 추가.
-                adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body(),SMSIsContainImportantKeyword(impKeywords, body));
+                adapter.addItem(mObj.getMessage_Address(), mObj.getMessage_Body(),SMSIsContainImportantKeyword(impKeywords, body)
+                ,mObj.getMessage_Time(), name);
             }
         }
         adapter.notifyDataSetChanged();
@@ -180,10 +186,12 @@ public class ImportantMessagesActivity extends Activity {
 
                 String Address = mObj.getMessage_Address();
                 String Body = mObj.getMessage_Body();
+                String Name = mObj.getName();
 
                 Intent intent = new Intent(ImportantMessagesActivity.this, MessageActivity.class);
                 intent.putExtra("key_Address", Address);
                 intent.putExtra("key_Body", Body);
+                intent.putExtra("key_Name", Name);
                 startActivity(intent);
             }
         });
@@ -226,16 +234,6 @@ public class ImportantMessagesActivity extends Activity {
             return keywords_temp;
     }
 
-
-    public static SpannableString getUnderLineColorText(String string, String targetString, int color) {
-        SpannableString spannableString = new SpannableString(string);
-        int targetStartIndex = string.indexOf(targetString);
-        int targetEndIndex = targetStartIndex + targetString.length();
-        spannableString.setSpan(new ForegroundColorSpan(color), targetStartIndex, targetEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new UnderlineSpan(), targetStartIndex, targetEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return spannableString;
-    }
 
 
     @Override

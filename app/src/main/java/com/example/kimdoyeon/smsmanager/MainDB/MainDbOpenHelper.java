@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MainDbOpenHelper {
 
-    private static final String DATABASE_NAME = "InnerDatabase(SQLite).db";
+    private static final String DATABASE_NAME = "InnerDatabase(SQLite)_sms.db";
     private static final int DATABASE_VERSION = 1;
     public static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
@@ -54,24 +54,26 @@ public class MainDbOpenHelper {
     }
 
     // Insert DB
-    public long insertColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public long insertColumn(long messageId, long threadId, String address , String timestamp, String body, String name){
         ContentValues values = new ContentValues();
         values.put(MainDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(MainDataBases.CreateDB.THREAD_ID, threadId);
         values.put(MainDataBases.CreateDB.MESSAGE_ADDRESS, address);
         values.put(MainDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(MainDataBases.CreateDB.MESSAGE_BODY, body);
+        values.put(MainDataBases.CreateDB.NAME, name);
         return mDB.insert(MainDataBases.CreateDB._TABLE, null, values);
     }
 
     // Update DB
-    public boolean updateColumn(long messageId, long threadId, String address , long timestamp, String body){
+    public boolean updateColumn(long messageId, long threadId, String address , String timestamp, String body,String name){
         ContentValues values = new ContentValues();
         values.put(MainDataBases.CreateDB.MESSAGE_ID, messageId);
         values.put(MainDataBases.CreateDB.THREAD_ID, threadId);
         values.put(MainDataBases.CreateDB.MESSAGE_ADDRESS, address);
         values.put(MainDataBases.CreateDB.MESSAGE_TIME, timestamp);
         values.put(MainDataBases.CreateDB.MESSAGE_BODY, body);
+        values.put(MainDataBases.CreateDB.NAME, name);
         // return mDB.update(DataBases.CreateDB._TABLE, values, "_id=" + id, null) > 0;
         return mDB.update(MainDataBases.CreateDB._TABLE, values, null, null) > 0;
     }
