@@ -1,7 +1,10 @@
 package com.example.kimdoyeon.smsmanager;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +19,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.kimdoyeon.smsmanager.AppWidget.NewAppWidget;
 import com.example.kimdoyeon.smsmanager.DeleteKeywordDB.DeleteKeywordDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ImportantKeywordDB.ImportantKeywordsDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.ImportantMessagesDB.ImportantMessagesDbOpenHelper;
@@ -49,6 +53,8 @@ public class ImportantMessagesActivity extends Activity {
     public ArrayList<MessageObj_Important> mArray = new ArrayList<MessageObj_Important>();
     public ArrayList<String> impKeywords = new ArrayList<String>();
 
+    public static final String STATE = "state";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_important_activity);
@@ -62,6 +68,7 @@ public class ImportantMessagesActivity extends Activity {
                 /*중요 키워드 목록으로 이동하도록 구현할 것.*/
                 Intent intent = new Intent(ImportantMessagesActivity.this, ImportantKeywordsActivity.class);
                 startActivityForResult(intent, 1000);
+
 
             }
         });
@@ -195,6 +202,38 @@ public class ImportantMessagesActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+
+        important_messages_listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MessageObj_Important mObj = (MessageObj_Important) parent.getItemAtPosition(position);
+
+                String result = "";
+                result = mObj.getMessage_Body();
+
+                Toast.makeText(getApplicationContext(),"해당SMS를 바탕화면에 등록합니다.", Toast.LENGTH_SHORT).show();
+
+                SharedPreferences sharedPreferences = ImportantMessagesActivity.this.getSharedPreferences(STATE,
+                        Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+
+                editor.putString(STATE, result);
+                editor.commit();
+
+                Intent intent2 = new Intent(ImportantMessagesActivity.this, NewAppWidget.class);
+                //intent2.putExtra("key","테스트");
+                intent2.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                ImportantMessagesActivity.this.sendBroadcast(intent2);
+
+
+
+                return true;
+            }
+        });
+
+
 
     }
 
