@@ -7,7 +7,8 @@
     android:background="?attr/colorPrimaryDark"
     android:fitsSystemWindows="true"
     android:minHeight="?attr/actionBarSize"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    android:backgroundTint="#b2ff77"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,21 +17,24 @@
 
 
         <Button
+            android:layout_gravity="center_vertical"
             android:id="@+id/btnShowNavigationDrawer"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/ic_menu" />
+            android:background="@drawable/hamburger" />
 
         <TextView
+            android:layout_gravity="center_vertical"
             android:id="@+id/txtToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="SMS "
             android:fontFamily="@font/font_godo"
-            android:layout_marginLeft="55dp"
-            android:textColor="@color/colorAccent"
+            android:layout_marginLeft="75dp"
+            android:textColor="#000000"
             android:textSize="20dp" />
 
         <ImageView
@@ -39,13 +43,14 @@
             android:src="@drawable/appicon" />
 
         <TextView
+            android:layout_gravity="center_vertical"
             android:id="@+id/txtToolbarTitl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text=" Manager"
             android:fontFamily="@font/font_godo"
-            android:textColor="@color/colorAccent"
+            android:textColor="#000000"
             android:textSize="20dp" />
 
 

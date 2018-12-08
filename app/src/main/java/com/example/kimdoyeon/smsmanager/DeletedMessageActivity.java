@@ -87,7 +87,7 @@ public class DeletedMessageActivity extends Activity {
     public void showDatabase(String sort) {
 
         mArray.clear();
-        Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
         adapter = new DeletedMessageListViewAdapter(this, R.layout.listview_item_deleted_message, mArray);
 
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);

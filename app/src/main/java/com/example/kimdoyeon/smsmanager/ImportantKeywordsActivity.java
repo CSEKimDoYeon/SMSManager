@@ -72,7 +72,7 @@ public class ImportantKeywordsActivity extends Activity {
         if(resultCode == RESULT_OK && data != null)
         {
             String result = data.getStringExtra("data");
-            Toast.makeText(getApplicationContext(), "전달받은 데이터 : " + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "전달받은 데이터 : " + result, Toast.LENGTH_SHORT).show();
             mDbOpenHelper.insertColumn(result);
 
             showDatabase(sort);
@@ -85,7 +85,7 @@ public class ImportantKeywordsActivity extends Activity {
     }
 
     public void showDatabase(String sort) {
-        Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
         adapter = new ImportantKeywordsListViewAdapter(this, R.layout.listview_item_important_keyword, mArray);
 
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);

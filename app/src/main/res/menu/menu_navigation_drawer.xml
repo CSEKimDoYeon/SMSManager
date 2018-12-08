@@ -6,19 +6,19 @@
 
         <item
             android:id="@+id/first_navigation_item"
-            android:icon="@drawable/ic_recyclebin"
+            android:icon="@drawable/menu_star"
             android:title="중요 SMS"
             />
 
 
         <item
             android:id="@+id/second_navigation_item"
-            android:icon="@drawable/ic_recyclebin"
+            android:icon="@drawable/menu_delete"
             android:title="삭제 Keyword 관리" />
 
         <item
             android:id="@+id/third_navigation_item"
-            android:icon="@drawable/ic_recyclebin"
+            android:icon="@drawable/menu_spam2"
             android:title="스팸번호 관리" />
 
         <item

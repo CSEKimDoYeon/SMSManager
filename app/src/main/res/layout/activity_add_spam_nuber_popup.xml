@@ -38,6 +38,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/font_godo"
                 android:maxLength="15"
+                android:inputType="number"
                 android:hint="번호를 입력하세요." />
 
             <Button

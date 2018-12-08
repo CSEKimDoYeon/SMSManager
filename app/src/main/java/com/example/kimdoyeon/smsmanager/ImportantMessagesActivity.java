@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kimdoyeon.smsmanager.AppWidget.NewAppWidget;
@@ -28,6 +29,8 @@ import com.example.kimdoyeon.smsmanager.ListViewAdapter.ImportantMessagesListVie
 import com.example.kimdoyeon.smsmanager.MainDB.MainDbOpenHelper;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj;
 import com.example.kimdoyeon.smsmanager.Objects.MessageObj_Important;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -106,7 +109,7 @@ public class ImportantMessagesActivity extends Activity {
         if(resultCode == RESULT_OK && data != null)
         {
             String result = data.getStringExtra("data");
-            Toast.makeText(getApplicationContext(), "전달받은 데이터 : " + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "전달받은 데이터 : " + result, Toast.LENGTH_SHORT).show();
 
             showDatabase(sort);
         }
@@ -153,7 +156,7 @@ public class ImportantMessagesActivity extends Activity {
     public void showDatabase(String sort) {
         setImportant_Keyword_Array(); // 중요키워드 디비를 열어서 ArrayList에 저장한다.
         mArray.clear();
-        Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Show Database", Toast.LENGTH_SHORT).show();
         adapter = new ImportantMessagesListViewAdapter(this, R.layout.listview_item, mArray);
 
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);

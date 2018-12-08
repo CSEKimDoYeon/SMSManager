@@ -81,9 +81,8 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
-                Toast.makeText(getApplicationContext(), "SMS RECEIVE", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "SMS RECEIVE", Toast.LENGTH_SHORT).show();
                 readSMSMessage();
             }
         }
@@ -386,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         mArray.clear();
         adapter = new ListViewAdapter(this, R.layout.listview_item, mArray);
 
-        Toast.makeText(getApplicationContext(), "문자 목록을 로그캣에 출력합니다.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "문자 목록을 로그캣에 출력합니다.", Toast.LENGTH_SHORT).show();
 
         Uri allMessage = Uri.parse("content://sms/inbox");
         ContentResolver cr = getContentResolver();
